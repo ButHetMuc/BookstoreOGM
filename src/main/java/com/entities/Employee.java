@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "employees")
 public class Employee {
 	@Id
-	private long id;
+	private ObjectId id;
 	private String name;
 	private String socialId;
 	private String phoneNumber;
