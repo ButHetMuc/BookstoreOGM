@@ -8,6 +8,7 @@ import org.hibernate.ogm.OgmSessionFactory;
 
 import com.dao.BookDao;
 import com.entities.Book;
+import com.entities.Category;
 import com.utils.HibernateUtils;
 
 public class BookDaoImpl implements BookDao{
@@ -17,21 +18,21 @@ public class BookDaoImpl implements BookDao{
 		sessionFactory= HibernateUtils.getInstance().getSessionFactory();
 	}
 	 public boolean add(Book book) {
-//		OgmSession session = sessionFactory.getCurrentSession();
-//		Transaction tr = session.getTransaction();
-//		try {
-//			tr.begin();
-////			for (Caterogy caterogy	: book.getCaterogies()) {
-////				session.save(caterogy);
-////			}
-//			session.save(book.getAuthor());
-//			session.save(book);
-//			tr.commit();
-//			return true;
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			tr.rollback();
-//		}
+		OgmSession session = sessionFactory.getCurrentSession();
+		Transaction tr = session.getTransaction();
+		try {
+			tr.begin();
+			for (Category caterogy	: book.getCaterogies()) {
+				session.save(caterogy);
+			}
+			session.save(book.getAuthor());
+			session.save(book);
+			tr.commit();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			tr.rollback();
+		}
 		return false;
 	}
 	

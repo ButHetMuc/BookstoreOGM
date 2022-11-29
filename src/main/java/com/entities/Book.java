@@ -25,8 +25,8 @@ public class Book {
 	@Id
 	private ObjectId id;
 	private String name;
-//	@ManyToOne
-//	private Author author;
+	@OneToOne
+	private Author author;
 	
 	@OneToMany
 	private Set<Category> caterogies = new HashSet<Category>();
