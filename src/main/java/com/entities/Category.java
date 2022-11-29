@@ -13,14 +13,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "employees")
-public class Employee {
+@Table(name = "categories")
+public class Category {
 	@Id
-	private long id;
+	private ObjectId id;
 	private String name;
-	private String socialId;
-	private String phoneNumber;
-	private String address;
-	private Account acount; 
-	
 }

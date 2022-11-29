@@ -1,33 +1,31 @@
 package com.dao.impl;
 
-import java.util.Iterator;
-
+import org.bson.types.ObjectId;
 import org.hibernate.Transaction;
 import org.hibernate.ogm.OgmSession;
 import org.hibernate.ogm.OgmSessionFactory;
 
-import com.dao.BookDao;
-import com.entities.Book;
-import com.entities.Category;
+import com.dao.IAuthorDao;
+import com.entities.Author;
 import com.utils.HibernateUtils;
 
-public class BookDaoImpl implements BookDao{
-	private OgmSessionFactory sessionFactory ;
+public class AuthorDaoImpl implements IAuthorDao {
 	
-	public BookDaoImpl() {
+	private OgmSessionFactory sessionFactory;
+
+	public AuthorDaoImpl() {
 		sessionFactory= HibernateUtils.getInstance().getSessionFactory();
 	}
-	 public boolean add(Book book) {
+
+	@Override
+	public boolean add(Author author) {
 		OgmSession session = sessionFactory.getCurrentSession();
 		Transaction tr = session.getTransaction();
 		try {
 			tr.begin();
-			for (Category caterogy	: book.getCaterogies()) {
-				session.save(caterogy);
-			}
-			session.save(book.getAuthor());
-			session.save(book);
+			session.save(author);
 			tr.commit();
+			System.out.println("add author ok");
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -35,21 +33,24 @@ public class BookDaoImpl implements BookDao{
 		}
 		return false;
 	}
-	
+
 	@Override
-	public boolean delete(Book book) {
+	public boolean delete(ObjectId authorId) {
 		// TODO Auto-generated method stub
+		
 		return false;
 	}
+
 	@Override
-	public boolean update(Book book) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	@Override
-	public boolean findById(long bookId) {
+	public boolean update(Author newAuthor) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	@Override
+	public boolean findById(ObjectId authorId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
 }

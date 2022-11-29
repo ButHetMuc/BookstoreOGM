@@ -1,7 +1,6 @@
 package com.entities;
 
 import javax.persistence.Embeddable;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,19 +1,16 @@
 package com.entities;
-
-import java.util.UUID;
-
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.*;
+import org.bson.types.ObjectId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+
 
 @Entity
 @Table(name = "Books")
@@ -21,12 +18,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor 
 @NoArgsConstructor
 public class Book {
+	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private ObjectId id;
 	private String name;
+	@OneToOne
 	private Author author;
-//	private Caterogy category;
+	
+	@OneToMany
+	private Set<Category> caterogies = new HashSet<Category>();
 	private int year;
 	private int price;
 	
