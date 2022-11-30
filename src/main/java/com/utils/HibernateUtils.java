@@ -30,7 +30,7 @@ public class HibernateUtils {
 //				.addAnnotatedClass(Employee.class)
 //				.addAnnotatedClass(Bill.class)
 //				.addAnnotatedClass(BillDetails.class)
-//				.addAnnotatedClass(Publisher.class)
+				.addAnnotatedClass(Publisher.class)
 				.getMetadataBuilder()
 				.build();
 		sessionFactory = metatdata.getSessionFactoryBuilder()

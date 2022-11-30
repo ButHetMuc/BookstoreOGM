@@ -25,6 +25,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -45,10 +46,18 @@ import javax.swing.border.LineBorder;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import org.bson.types.ObjectId;
+
 import com.dao.BookDao;
+import com.dao.IAuthorDao;
+import com.dao.ICategoriesDao;
+import com.dao.impl.AuthorDaoImpl;
 import com.dao.impl.BookDaoImpl;
+import com.dao.impl.CategoryDaoImpl;
+import com.entities.Author;
 import com.entities.Book;
 import com.entities.Category;
+import com.entities.Publisher;
 
 //import connectdb.ConnectDB;
 //import dao.LoaiBook_dao;
@@ -62,18 +71,17 @@ import javax.swing.ImageIcon;
 import java.awt.GridLayout;
 import javax.swing.Box;
 
-public class ManageBookUI extends JFrame implements ActionListener, MouseListener,KeyListener {
+public class ManageBookUI extends JFrame implements ActionListener, MouseListener, KeyListener {
 
 	private JPanel contentPane;
 	private JComboBox cboLoaiBook;
 	private JTextField txtMaBook;
 	private JTextField txtTenBook;
-	private JComboBox cboNhaCC;
+	private JComboBox cboTacGia;
 	private JTable tblDsBook;
 	private DefaultTableModel modelDsBook;
 	private JTextField txtTimKiem;
-	private JTextField txtNgaySanXuat;
-	private JTextField txtHanSuDung;
+	private JTextField txtNamXuatBan;
 	private JTextField txtDonGia;
 	private JTextField txtSoLuong;
 	private JButton btnThemMoi;
@@ -85,6 +93,8 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 //	private ArrayList<NhaCungCap> dsNhaCungCaps;
 //	private ArrayList<LoaiBook> dsLoaiBooks;
 	private BookDao bookDao;
+	private IAuthorDao authorDao;
+	private ICategoriesDao categoryDao;
 //	private NhaCungCap_dao nhaCungCapDao;
 //	private LoaiBook_dao loaiBookDao;
 	private DefaultComboBoxModel<String> modelCboLoaiBook;
@@ -112,7 +122,6 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 	 */
 	public ManageBookUI() throws SQLException {
 
-
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, 1300, 700);
 		contentPane = new JPanel();
@@ -127,7 +136,7 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 		FlowLayout flowLayout = (FlowLayout) pnTop.getLayout();
 		contentPane.add(pnTop, BorderLayout.NORTH);
 
-		JLabel lblTieuDe = new JLabel("Quản lí thuốc");
+		JLabel lblTieuDe = new JLabel("Quản lí sách");
 		lblTieuDe.setFont(new Font("Tahoma", Font.BOLD, 20));
 		lblTieuDe.setHorizontalAlignment(SwingConstants.CENTER);
 		pnTop.add(lblTieuDe);
@@ -146,7 +155,7 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 		pnLblThongTin.setBorder(new LineBorder(new Color(0, 0, 0)));
 		pnThongTin.add(pnLblThongTin);
 
-		JLabel lblTitile = new JLabel("Thông Tin Thuốc");
+		JLabel lblTitile = new JLabel("Thông Tin Sách");
 		lblTitile.setFont(new Font("Tahoma", Font.BOLD, 17));
 		pnLblThongTin.add(lblTitile);
 
@@ -160,7 +169,7 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 		flowLayout_5.setAlignment(FlowLayout.LEFT);
 		pnThongTin.add(pnLoaiBook);
 
-		JLabel lblLoaiBook = new JLabel("Thể loại thuốc");
+		JLabel lblLoaiBook = new JLabel("Thể loại");
 		lblLoaiBook.setPreferredSize(new Dimension(80, 14));
 		pnLoaiBook.add(lblLoaiBook);
 
@@ -202,14 +211,14 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 		fl_pnNhaCC.setAlignment(FlowLayout.LEFT);
 		pnThongTin.add(pnNhaCC);
 
-		JLabel lblNhaCungCap = new JLabel("Tác giả");
-		lblNhaCungCap.setPreferredSize(new Dimension(80, 14));
-		pnNhaCC.add(lblNhaCungCap);
+		JLabel lblTacGia = new JLabel("Tác giả");
+		lblTacGia.setPreferredSize(new Dimension(80, 14));
+		pnNhaCC.add(lblTacGia);
 
-		addDataCboNhaCC();
-		cboNhaCC.setPreferredSize(new Dimension(204, 23));
+		addDatacboTacGia();
+		cboTacGia.setPreferredSize(new Dimension(204, 23));
 
-		pnNhaCC.add(cboNhaCC);
+		pnNhaCC.add(cboTacGia);
 
 		JPanel pnNgaySanXuat = new JPanel();
 		pnThongTin.add(pnNgaySanXuat);
@@ -218,11 +227,11 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 		lblNgaySanXuat.setPreferredSize(new Dimension(80, 14));
 		pnNgaySanXuat.add(lblNgaySanXuat);
 
-		txtNgaySanXuat = new JTextField();
-		txtNgaySanXuat.setPreferredSize(new Dimension(7, 23));
-		txtNgaySanXuat.setColumns(22);
-		pnNgaySanXuat.add(txtNgaySanXuat);
-
+		txtNamXuatBan = new JTextField();
+		txtNamXuatBan.setPreferredSize(new Dimension(7, 23));
+		txtNamXuatBan.setColumns(22);
+		pnNgaySanXuat.add(txtNamXuatBan);
+		txtNamXuatBan.setText("1");
 
 		JPanel pnDonGia = new JPanel();
 		pnThongTin.add(pnDonGia);
@@ -267,16 +276,19 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 		btnSua = new JButton("Sửa", iconSua);
 		btnSua.setBackground(Color.WHITE);
 		pnChucNang.add(btnSua);
+		btnSua.setEnabled(false);
 
 		ImageIcon iconXoa = new ImageIcon("data//images//trash.png");
 		btnXoa = new JButton("Xóa", iconXoa);
 		btnXoa.setBackground(Color.WHITE);
 		pnChucNang.add(btnXoa);
+		btnXoa.setEnabled(false);
 
 		ImageIcon iconLamMoi = new ImageIcon("data//images//refresh.png");
 		btnLamMoi = new JButton("làm mới", iconLamMoi);
 		btnLamMoi.setBackground(Color.WHITE);
 		pnChucNang.add(btnLamMoi);
+		btnLamMoi.setEnabled(false);
 
 		JPanel pnCenter = new JPanel();
 //		pnCenter.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null),
@@ -288,7 +300,7 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 		pnCenterTop.setBorder(new LineBorder(new Color(0, 0, 0)));
 		pnCenter.add(pnCenterTop, BorderLayout.NORTH);
 
-		String[] arrCachTim = { "Tên thuốc", "Nhà cung cấp" };
+		String[] arrCachTim = { "Tên Sách", "Tên tác giả", "Tên nhà xuất bản" };
 		cboTimTheo = new JComboBox<String>(arrCachTim);
 		cboTimTheo.setPreferredSize(new Dimension(120, 23));
 		pnCenterTop.add(cboTimTheo);
@@ -298,22 +310,25 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 		pnCenterTop.add(txtTimKiem);
 		txtTimKiem.setColumns(10);
 
-		ImageIcon iconTim = new ImageIcon("data//images//search_16.png");
-		btnTimBook = new JButton("Tìm", iconTim);
+		btnTimBook = new JButton("Tìm kiếm");
 		btnTimBook.setBackground(Color.WHITE);
 		pnCenterTop.add(btnTimBook);
 
 		JPanel pnCenterMiddle = new JPanel();
 		pnCenter.add(pnCenterMiddle, BorderLayout.SOUTH);
 
-		String[] cols = { "Mã sách", "Tên sách", "Thể loại", "Năm xuất bản", "Tác giả",
-				"Đơn giá", "số lượng" };
+		String[] cols = { "Mã sách", "Tên sách", "Thể loại", "Năm xuất bản", "Tác giả", "Đơn giá", "số lượng" };
 		modelDsBook = new DefaultTableModel(cols, 0);
 		tblDsBook = new JTable(modelDsBook);
 		JScrollPane scrtbl = new JScrollPane(tblDsBook, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 		pnCenter.add(scrtbl, BorderLayout.CENTER);
+
+		// init dao
+		bookDao = new BookDaoImpl();
+		authorDao = new AuthorDaoImpl();
+		categoryDao = new CategoryDaoImpl();
 
 		renderData();
 		addDataCboLoaiBook();
@@ -328,7 +343,7 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 
 	}
 
-	private void addDataCboNhaCC() {
+	private void addDatacboTacGia() {
 //		nhaCungCapDao = new NhaCungCap_dao();
 //		dsNhaCungCaps = new ArrayList<NhaCungCap>();
 //		dsNhaCungCaps = nhaCungCapDao.getDsNhaCC();
@@ -337,9 +352,10 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 //		for (NhaCungCap ncc : dsNhaCungCaps) {
 //			modelCboNhaCungCap.addElement(ncc.getTenNhaCungCap());
 //		}
-//		cboNhaCC = new JComboBox<String>(modelCboNhaCungCap);
-		String[] nhacungcap = {"Kim Dong","So Ha" };
-		cboNhaCC = new JComboBox<String>(nhacungcap);
+//		cboTacGia = new JComboBox<String>(modelCboNhaCungCap);
+
+		String[] nhacungcap = { "Kim Dong", "So Ha" };
+		cboTacGia = new JComboBox<String>(nhacungcap);
 	}
 
 	private void addDataCboLoaiBook() {
@@ -351,26 +367,26 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 //			modelCboLoaiBook.addElement(lt.getTenLoai());
 //		}
 //		cboLoaiBook = new JComboBox<String>(modelCboLoaiBook);
-		String[] loaisach = {"Novel","Comic" };
+		String[] loaisach = { "Novel", "Comic" };
 		cboLoaiBook = new JComboBox<String>(loaisach);
 	}
 
 	private void renderData() {
-		bookDao = new BookDaoImpl();
 		dsBooks = bookDao.getAllBook();
-		
+
 		System.out.println("render data," + dsBooks.size());
 		modelDsBook.setRowCount(0);
-		for(Book book : dsBooks) {
-			Set<Category> cates = book.getCaterogies();
+		for (Book book : dsBooks) {
+			Set<Category> cates = book.getCategories();
 			String cateString = "";
-			for(Category cate : cates) {
+			for (Category cate : cates) {
 				cateString += cate.getName() + ",";
 			}
-			Object[] row = { book.getId(),book.getName(),cateString,book.getYear(),book.getAuthor().getName(),book.getPrice(),book.getQuantity()};
+			Object[] row = { book.getId(), book.getName(), cateString, book.getYear(), book.getAuthor().getName(),
+					book.getPrice(), book.getQuantity() };
 			modelDsBook.addRow(row);
 		}
-	
+
 	}
 
 	@Override
@@ -382,9 +398,11 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 		if (o.equals(btnThemMoi)) {
 			if (btnThemMoi.getText().equals("Thêm")) {
 				setNull();
-				btnXoa.setEnabled(false);
 				btnSua.setText("Lưu");
 				btnThemMoi.setText("Hủy");
+				btnXoa.setEnabled(false);
+				btnSua.setEnabled(true);
+				btnLamMoi.setEnabled(true);
 			} else if (btnThemMoi.getText().equals("Hủy")) {
 				btnSua.setText("Sửa");
 				btnThemMoi.setText("Thêm");
@@ -393,75 +411,89 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 			}
 		}
 
-		if (o.equals(btnSua) && btnThemMoi.getText().equals("Hủy")) {
+		if (o.equals(btnSua) && btnSua.getText().equals("Lưu")) {
 			if (checkData()) {
-				int maLoaiBook = cboLoaiBook.getSelectedIndex() + 1;
-				int maNhaCC = cboNhaCC.getSelectedIndex() + 1;
-				String tenBook = txtTenBook.getText().trim();
-				String ngaySX = txtNgaySanXuat.getText().trim();
-				String hanSD = txtHanSuDung.getText().trim();
-				double donGia = Double.parseDouble(txtDonGia.getText().trim());
+
+				// static data
+
+				Author a = new Author(new ObjectId(), "cong", "0868283916");
+				Publisher p = new Publisher(new ObjectId(), "publisher 1", "095848333", "Ha Giang");
+				Set<Category> cates = new HashSet<>();
+				cates.add(new Category(new ObjectId(), "category 1"));
+				cates.add(new Category(new ObjectId(), "category 4"));
+
+				String name = txtTenBook.getText();
+				int namXuatBan = Integer.parseInt(txtNamXuatBan.getText().trim());
+				int donGia = Integer.parseInt(txtDonGia.getText().trim());
 				int soLuong = Integer.parseInt(txtSoLuong.getText().trim());
 
-//				Book thuoc = new Book(new LoaiBook(maLoaiBook), tenBook, new NhaCungCap(maNhaCC), ngaySX, hanSD,
-//						donGia, soLuong);
-//				boolean kq = thuocDao.themBook(thuoc);
-//
-//				if (kq) {
-//					JOptionPane.showMessageDialog(null, "Thêm thuốc thành công");
-//					renderData();
-//				} else {
-//					JOptionPane.showMessageDialog(null, "Có lỗi xảy ra");
-//					return;
-//				}
+				Book b = new Book(new ObjectId(), name, a, cates, p, namXuatBan, donGia, soLuong);
+				boolean kq = bookDao.add(b);
+
+				if (kq) {
+					JOptionPane.showMessageDialog(null, "Thêm sách thành công");
+
+					renderData();
+				} else {
+					JOptionPane.showMessageDialog(null, "Có lỗi xảy ra");
+					return;
+				}
 				setNull();
 			}
 		}
+
 		if (o.equals(btnSua) && btnSua.getText().equals("Sửa")) {
 			int index = tblDsBook.getSelectedRow();
-			if(index != -1) {
-				if(checkData()) {
-					int maLoaiBook = cboLoaiBook.getSelectedIndex() + 1;
-					int maNhaCC = cboNhaCC.getSelectedIndex() + 1;
-					int maBook = Integer.parseInt(txtMaBook.getText().trim()); 
-					String tenBook = txtTenBook.getText().trim();
-					String ngaySX = txtNgaySanXuat.getText().trim();
-					String hanSD = txtHanSuDung.getText().trim();
-					double donGia = Double.parseDouble(txtDonGia.getText().trim());
+			if (index != -1) {
+				if (checkData()) {
+					// static data
+					Author a = dsBooks.get(index).getAuthor();
+					Publisher p = dsBooks.get(index).getPublisher();
+					Set<Category> cates = dsBooks.get(index).getCategories();
+
+					String name = txtTenBook.getText();
+					int namXuatBan = Integer.parseInt(txtNamXuatBan.getText().trim());
+					int donGia = Integer.parseInt(txtDonGia.getText().trim());
 					int soLuong = Integer.parseInt(txtSoLuong.getText().trim());
-					
-//					Book thuoc = new Book(maBook,new LoaiBook(maLoaiBook), tenBook, new NhaCungCap(maNhaCC), ngaySX, hanSD,
-//							donGia, soLuong);
-//					System.out.println(thuoc.toString());
-//					boolean kq = thuocDao.updateBook(thuoc);
-//					if (kq) {
-//						JOptionPane.showMessageDialog(null, "Sửa thành công");
-//						renderData();
-//					} else {
-//						JOptionPane.showMessageDialog(null, "Có lỗi xảy ra");
-//						return;
-//					}
-					setNull();
+
+					ObjectId bookId = new ObjectId(tblDsBook.getValueAt(index, 0).toString());
+
+					Book newBook = new Book(bookId, name, a, cates, p, namXuatBan, donGia, soLuong);
+
+					boolean kq = bookDao.update(newBook);
+					if (kq) {
+						JOptionPane.showMessageDialog(null, "Sửa thành công");
+						renderData();
+						setNull();
+					} else {
+						JOptionPane.showMessageDialog(null, "Có lỗi xảy ra");
+						return;
+					}
+
 				}
 			}
 		}
-		if(o.equals(btnXoa)) {
+		// done
+		if (o.equals(btnXoa)) {
 			int index = tblDsBook.getSelectedRow();
-			if(index != -1) {
-				
-				int choose = JOptionPane.showConfirmDialog(contentPane, "Chắc chắn xóa!","Xác nhận", JOptionPane.YES_NO_OPTION);
-				if(choose == 0) {
-//					tblDsBook.clearSelection();
-//					boolean kq = thuocDao.xoaBook(dsBooks.get(index));
-////						//System.out.println(kq);
-//					if(kq) {
-//						JOptionPane.showMessageDialog(contentPane, "Xóa thành công");
-//						renderData();
-//						return;
-//					}else {
-//						JOptionPane.showMessageDialog(contentPane, "Không thể xóa nhân viên này");
-//						return;
-//					}
+			if (index != -1) {
+
+				int choose = JOptionPane.showConfirmDialog(contentPane, "Chắc chắn xóa!", "Xác nhận",
+						JOptionPane.YES_NO_OPTION);
+				if (choose == 0) {
+					tblDsBook.clearSelection();
+
+					boolean kq = bookDao.delete(new ObjectId(tblDsBook.getValueAt(index, 0).toString()));
+
+					if (kq) {
+						JOptionPane.showMessageDialog(contentPane, "Xóa thành công");
+						renderData();
+						return;
+					} else {
+						JOptionPane.showMessageDialog(contentPane, "Không thể xóa quyển sách này");
+						return;
+					}
+
 				}
 			}
 		}
@@ -469,13 +501,12 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 	}
 
 	private void setNull() {
-		renderData();
+//		renderData();
 		cboLoaiBook.setSelectedIndex(0);
-		cboNhaCC.setSelectedIndex(0);
+		cboTacGia.setSelectedIndex(0);
 		txtMaBook.setText("");
 		txtTenBook.setText("");
-		txtNgaySanXuat.setText("");
-		txtHanSuDung.setText("");
+		txtNamXuatBan.setText("");
 		txtDonGia.setText("");
 		txtSoLuong.setText("");
 		txtTimKiem.setText("");
@@ -483,107 +514,80 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 
 	private boolean checkData() {
 
-		String maBook = txtMaBook.getText().trim();
-		String tenBook = txtTenBook.getText().trim();
-		String ngaySX = txtNgaySanXuat.getText().trim();
-		String hanSD = txtHanSuDung.getText().trim();
-		String donGia = txtDonGia.getText().trim();
-		String soLuong = txtSoLuong.getText().trim();
-
-		if (tenBook.equals("")) {
-			JOptionPane.showMessageDialog(null, "tên thuốc không được bổ trống");
-			txtTenBook.requestFocus();
-			return false;
-		} else {
-			if (!tenBook.matches("^(\\w+\\s*)+$")) {
-				JOptionPane.showMessageDialog(null,
-						"Tên thuốc không chứa kí tự đặc biệt, có thể có khoảng trắng");
-				txtTenBook.selectAll();
-				txtTenBook.requestFocus();
-				return false;
-			}
-		}
-		if (ngaySX.equals("")) {
-			JOptionPane.showMessageDialog(null, "Ngày sản xuất không được bỏ trống");
-			txtNgaySanXuat.requestFocus();
-			return false;
-		} else {
-			if (!ngaySX.matches("^\\d{4}(-\\d{2}){2}$")) {
-				JOptionPane.showMessageDialog(null, "Sai định dạng ngày yyyy-mm-dd");
-				txtNgaySanXuat.selectAll();
-				txtNgaySanXuat.requestFocus();
-				return false;
-			}
-		}
-
-		if (hanSD.equals("")) {
-			JOptionPane.showMessageDialog(null, "Hạn sử dụng không được bỏ trống");
-			txtHanSuDung.requestFocus();
-			return false;
-		} else {
-			if (!hanSD.matches("^^\\d{4}(-\\d{2}){2}$")) {
-				JOptionPane.showMessageDialog(null, "Sai định dạng ngày yyyy-mm-dd");
-				txtHanSuDung.selectAll();
-				txtHanSuDung.requestFocus();
-				return false;
-			}
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			try {
-				java.util.Date date1 = sdf.parse(ngaySX);
-				java.util.Date date2 = sdf.parse(hanSD);
-				if(date2.before(date1)) {
-					JOptionPane.showMessageDialog(null, "Hạn sử dụng phải sau ngày ngày sản xuất");
-					return false;
-				}
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			
-			
-		}
-
-		if (donGia.equals("")) {
-			JOptionPane.showMessageDialog(null, "Vui lòng nhập đơn giá");
-			txtDonGia.requestFocus();
-			return false;
-		} else {
-			try {
-				double dg = Double.parseDouble(donGia);
-				if (dg <= 0) {
-					JOptionPane.showMessageDialog(null, "đơn giá > 0");
-					txtDonGia.selectAll();
-					txtDonGia.requestFocus();
-					return false;
-				}
-
-			} catch (Exception e) {
-				JOptionPane.showMessageDialog(null, "Đơn giá phải là số thực");
-				txtDonGia.selectAll();
-				txtDonGia.requestFocus();
-				return false;
-			}
-		}
-		if (soLuong.equals("")) {
-			JOptionPane.showMessageDialog(null, "Vui lòng nhập số lượng");
-			txtSoLuong.requestFocus();
-			return false;
-		} else {
-			try {
-				int sl = Integer.parseInt(soLuong);
-				if (sl <= 0) {
-					JOptionPane.showMessageDialog(null, "số lượng >= 0");
-					txtSoLuong.selectAll();
-					txtSoLuong.requestFocus();
-					return false;
-				}
-
-			} catch (Exception e) {
-				JOptionPane.showMessageDialog(null, "Số lượng phải là định dạng số nguyên");
-				txtSoLuong.selectAll();
-				txtSoLuong.requestFocus();
-				return false;
-			}
-		}
+//		String maBook = txtMaBook.getText().trim();
+//		String tenBook = txtTenBook.getText().trim();
+//		String ngaySX = txtNamXuatBan.getText().trim();
+//		String donGia = txtDonGia.getText().trim();
+//		String soLuong = txtSoLuong.getText().trim();
+//
+//		if (tenBook.equals("")) {
+//			JOptionPane.showMessageDialog(null, "tên thuốc không được bổ trống");
+//			txtTenBook.requestFocus();
+//			return false;
+//		} else {
+//			if (!tenBook.matches("^(\\w+\\s*)+$")) {
+//				JOptionPane.showMessageDialog(null,
+//						"Tên thuốc không chứa kí tự đặc biệt, có thể có khoảng trắng");
+//				txtTenBook.selectAll();
+//				txtTenBook.requestFocus();
+//				return false;
+//			}
+//		}
+//		if (ngaySX.equals("")) {
+//			JOptionPane.showMessageDialog(null, "Ngày sản xuất không được bỏ trống");
+//			txtNamXuatBan.requestFocus();
+//			return false;
+//		} else {
+//			if (!ngaySX.matches("^\\d{4}(-\\d{2}){2}$")) {
+//				JOptionPane.showMessageDialog(null, "Sai định dạng ngày yyyy-mm-dd");
+//				txtNamXuatBan.selectAll();
+//				txtNamXuatBan.requestFocus();
+//				return false;
+//			}
+//		}
+//
+//		if (donGia.equals("")) {
+//			JOptionPane.showMessageDialog(null, "Vui lòng nhập đơn giá");
+//			txtDonGia.requestFocus();
+//			return false;
+//		} else {
+//			try {
+//				double dg = Double.parseDouble(donGia);
+//				if (dg <= 0) {
+//					JOptionPane.showMessageDialog(null, "đơn giá > 0");
+//					txtDonGia.selectAll();
+//					txtDonGia.requestFocus();
+//					return false;
+//				}
+//
+//			} catch (Exception e) {
+//				JOptionPane.showMessageDialog(null, "Đơn giá phải là số thực");
+//				txtDonGia.selectAll();
+//				txtDonGia.requestFocus();
+//				return false;
+//			}
+//		}
+//		if (soLuong.equals("")) {
+//			JOptionPane.showMessageDialog(null, "Vui lòng nhập số lượng");
+//			txtSoLuong.requestFocus();
+//			return false;
+//		} else {
+//			try {
+//				int sl = Integer.parseInt(soLuong);
+//				if (sl <= 0) {
+//					JOptionPane.showMessageDialog(null, "số lượng >= 0");
+//					txtSoLuong.selectAll();
+//					txtSoLuong.requestFocus();
+//					return false;
+//				}
+//
+//			} catch (Exception e) {
+//				JOptionPane.showMessageDialog(null, "Số lượng phải là định dạng số nguyên");
+//				txtSoLuong.selectAll();
+//				txtSoLuong.requestFocus();
+//				return false;
+//			}
+//		}
 		return true;
 	}
 
@@ -594,19 +598,22 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		int row = tblDsBook.getSelectedRow();
+
 		if (row == -1) {
 			btnSua.setEnabled(false);
 			btnXoa.setEnabled(false);
 		}
+
+		btnSua.setEnabled(true);
+		btnXoa.setEnabled(true);
+
 		txtMaBook.setText(modelDsBook.getValueAt(row, 0).toString());
 		txtTenBook.setText((String) modelDsBook.getValueAt(row, 1));
-		cboLoaiBook.setSelectedItem(modelDsBook.getValueAt(row, 2));
-		txtNgaySanXuat.setText((String) modelDsBook.getValueAt(row, 3));
-		txtHanSuDung.setText((String) modelDsBook.getValueAt(row, 4));
-		cboNhaCC.setSelectedItem(modelDsBook.getValueAt(row, 5));
-		txtDonGia.setText(modelDsBook.getValueAt(row, 6).toString());
-		txtSoLuong.setText(modelDsBook.getValueAt(row, 7).toString());
+//		cboLoaiBook.setSelectedItem(modelDsBook.getValueAt(row, 2));
+		txtNamXuatBan.setText(modelDsBook.getValueAt(row, 3).toString());
 
+		txtDonGia.setText(modelDsBook.getValueAt(row, 5).toString());
+		txtSoLuong.setText(modelDsBook.getValueAt(row, 6).toString());
 	}
 
 	@Override
@@ -635,26 +642,46 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
+
+	
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	private void renderDataTimKiem() {
-//		modelDsBook.setRowCount(0);
-//		for (Book th : dsBooks) {
-//			Object[] row = { th.getMaBook(), th.getTenBook(), th.getLoaiBook().getTenLoai(), th.getNgaySanXuat(),
-//					th.getNgayHetHan(), th.getNhaCungCap().getTenNhaCungCap(), th.getDonGia(), th.getSoLuong() };
-//			modelDsBook.addRow(row);
-//		}
+
+	private void renderDataTimKiem(List<Book> list) {
+		modelDsBook.setRowCount(0);
+		for (Book book : list) {
+			Set<Category> cates = book.getCategories();
+			String cateString = "";
+			for (Category cate : cates) {
+				cateString += cate.getName() + ",";
+			}
+			Object[] row = { book.getId(), book.getName(), cateString, book.getYear(), book.getAuthor().getName(),
+					book.getPrice(), book.getQuantity() };
+			modelDsBook.addRow(row);
+		}
 	}
-	
+
 	@Override
 	public void keyReleased(KeyEvent e) {
+		String timTheo = cboTimTheo.getSelectedItem().toString();
+
+		if (timTheo.equals("Tên Sách")) {
+			List<Book> list = bookDao.findManyByName(txtTimKiem.getText());
+			renderDataTimKiem(list);
+			System.out.println(list.size());
+		}
+		
+		else if(timTheo.equals("Tên Tác Giả")) {
+			List<Book> list = bookDao.findManyByAuthorName(txtTimKiem.getText());
+			renderDataTimKiem(list);
+			System.out.println(list.size());
+		}
+
 //		String key = txtTimKiem.getText().trim();
 //		String type = cboTimTheo.getSelectedItem().toString().trim();
 //		dsBooks = new ArrayList<Book>();
@@ -665,27 +692,28 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 //			dsBooks = thuocDao.TimBook("tenNhaCungCap",key);
 //			renderDataTimKiem();
 //		}
-		
+
 	}
+
 	private String formatNumberForMoney(double money) {
 		Locale localeVN = new Locale("vi", "VN");
 		NumberFormat currencyVN = NumberFormat.getCurrencyInstance(localeVN);
-	    String str1 = currencyVN.format(Math.round(money));
-	    str1 = str1.substring(0,str1.length() - 2);
-	    return str1 + " VND";
+		String str1 = currencyVN.format(Math.round(money));
+		str1 = str1.substring(0, str1.length() - 2);
+		return str1 + " VND";
 	}
-	
+
 	private double formatMoneyToDouble(String str) {
 		String[] s = str.split("[. VND]");
 		String tmp = "";
-		
+
 		for (String string : s) {
 			tmp += string;
 		}
 		return Double.parseDouble(tmp);
 	}
-	
-	public Date stringToDate (String strDate) {
+
+	public Date stringToDate(String strDate) {
 		SimpleDateFormat formater = new SimpleDateFormat("yyyy-mm-dd");
 		try {
 			Date date = (Date) formater.parse(strDate);
