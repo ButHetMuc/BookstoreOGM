@@ -367,7 +367,7 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 			for(Category cate : cates) {
 				cateString += cate.getName() + ",";
 			}
-			Object[] row = { book.getId(),book.getName(),cateString,book.getYear(),book.getAuthor().getName(),book.getPrice()};
+			Object[] row = { book.getId(),book.getName(),cateString,book.getYear(),book.getAuthor().getName(),book.getPrice(),book.getQuantity()};
 			modelDsBook.addRow(row);
 		}
 	

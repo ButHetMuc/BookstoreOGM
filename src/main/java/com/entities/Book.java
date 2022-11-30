@@ -31,13 +31,8 @@ public class Book implements Serializable {
 	private Set<Category> caterogies = new HashSet<Category>();
 	private int year;
 	private int price;
+	private int quantity;
 	
-	public Book(String name, Author author, int year, int price) {
-		super();
-		this.name = name;
-		this.author = author;
-		this.year = year;
-		this.price = price;
-	}
+
 	
 }

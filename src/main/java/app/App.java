@@ -38,8 +38,7 @@ public class App {
 		cates.add(new Category(new ObjectId(), "category 1"));
 		cates.add(new Category(new ObjectId(), "category 4"));
 
-		Book b = new Book(new ObjectId(), "book2", a, cates, 2001, 0);
-
+		Book b = new Book(new ObjectId(), "book_name", a, cates, 2001, 1000, 4);
 		bookDao.add(b);
 
 		List<Book> list = bookDao.getAllBook();
