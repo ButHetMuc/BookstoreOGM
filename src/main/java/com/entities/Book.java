@@ -2,6 +2,8 @@ package com.entities;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
@@ -17,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor 
 @NoArgsConstructor
-public class Book {
+public class Book implements Serializable {
 	
 	@Id
 	private ObjectId id;
@@ -25,17 +27,12 @@ public class Book {
 	@OneToOne
 	private Author author;
 	
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER)
 	private Set<Category> caterogies = new HashSet<Category>();
 	private int year;
 	private int price;
+	private int quantity;
 	
-	public Book(String name, Author author, int year, int price) {
-		super();
-		this.name = name;
-		this.author = author;
-		this.year = year;
-		this.price = price;
-	}
+
 	
 }

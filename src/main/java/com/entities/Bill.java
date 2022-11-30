@@ -2,6 +2,8 @@ package com.entities;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -19,11 +21,13 @@ import lombok.NoArgsConstructor;
 @Table(name = "bills")
 public class Bill {
 	@Id
-	private long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private ObjectId id;
 	private Date createAt;
 	private double total;
 	
-	private Employee employee;
 	private Customer customer;
-	private ArrayList<BillDetails> billDetais = new ArrayList<BillDetails>();
+	
+	@OneToMany
+	private Set<BillDetails> billDetails = new HashSet<BillDetails>();
 }
