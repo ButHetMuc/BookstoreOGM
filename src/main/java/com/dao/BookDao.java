@@ -1,5 +1,7 @@
 package com.dao;
 
+import java.util.List;
+
 import com.entities.Book;
 
 public interface BookDao {
@@ -7,4 +9,5 @@ public interface BookDao {
 	public boolean delete(Book book);
 	public boolean update(Book book);
 	public boolean findById(long bookId);
+	public List getAllBook();
 }
