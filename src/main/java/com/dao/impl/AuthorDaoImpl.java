@@ -35,19 +35,6 @@ public class AuthorDaoImpl implements IAuthorDao {
 	}
 
 	@Override
-	public boolean delete(ObjectId authorId) {
-		// TODO Auto-generated method stub
-		
-		return false;
-	}
-
-	@Override
-	public boolean update(Author newAuthor) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public boolean findById(ObjectId authorId) {
 		// TODO Auto-generated method stub
 		return false;

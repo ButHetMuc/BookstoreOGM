@@ -1,5 +1,7 @@
 package com.entities;
 
+import java.io.Serializable;
+
 import javax.persistence.*;
 
 import org.bson.types.ObjectId;
@@ -14,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "categories")
-public class Category {
+public class Category implements Serializable {
 	@Id
 	private ObjectId id;
 	private String name;

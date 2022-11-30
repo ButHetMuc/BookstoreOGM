@@ -1,27 +1,29 @@
-package com.dao.impl;
+package com.rmi.remote;
 
-import java.util.Iterator;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 
-import org.bson.types.ObjectId;
 import org.hibernate.Transaction;
 import org.hibernate.ogm.OgmSession;
 import org.hibernate.ogm.OgmSessionFactory;
-import org.hibernate.query.NativeQuery;
 
-import com.dao.BookDao;
 import com.entities.Book;
 import com.entities.Category;
+import com.rmi.interfaces.IBook_dao;
 import com.utils.HibernateUtils;
 
-
-public class BookDaoImpl implements BookDao{
-	private OgmSessionFactory sessionFactory ;
+public class BookDao_Remote extends UnicastRemoteObject implements IBook_dao {
 	
-	public BookDaoImpl() {
+private OgmSessionFactory sessionFactory ;
+	
+	public BookDao_Remote() throws RemoteException {
 		sessionFactory= HibernateUtils.getInstance().getSessionFactory();
 	}
-	 public boolean add(Book book) {
+
+
+	@Override
+	public boolean add(Book book) throws RemoteException {
 		OgmSession session = sessionFactory.getCurrentSession();
 		Transaction tr = session.getTransaction();
 		try {
@@ -36,42 +38,34 @@ public class BookDaoImpl implements BookDao{
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
+			
 			tr.rollback();
 		}
 		return false;
 	}
-	
+
 	@Override
-	public boolean delete(Book book) {
+	public boolean delete(int bookId) throws RemoteException {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
 	@Override
-	public boolean update(Book book) {
+	public boolean update(int bookId, Book newBook)throws RemoteException {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
 	@Override
-	public Book findById(ObjectId bookId) {
+	public List getAllBooks() throws RemoteException {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 	@Override
-	public List getAllBook() {
-		OgmSession session = sessionFactory.getCurrentSession();
-	    Transaction tx = session.beginTransaction();
-	    List<Book> list = null;
-	    
-	    try {
-	      NativeQuery<Book> query = session.createNativeQuery("db.books.find({})",
-	    		  Book.class);
-	      list = query.getResultList();
-	      tx.commit();
-	    } catch (Exception e) {
-	      e.printStackTrace();
-	      tx.rollback();
-	    }
-	    return list;
+	public Book findById(int bookId)  throws RemoteException{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
