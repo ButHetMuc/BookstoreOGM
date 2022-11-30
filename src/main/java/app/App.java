@@ -1,6 +1,7 @@
 package app;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.bson.types.ObjectId;
@@ -23,9 +24,18 @@ public class App {
 		Set<Category> cates = new HashSet<>();
 		
 		cates.add(new Category(new ObjectId(), "category 1"));
+		cates.add(new Category(new ObjectId(), "category 4"));
 
 		Book b = new Book(new ObjectId(), "book2", a, cates,2001, 0);
 		bookDao.add(b);
+		
+		List<Book> list = bookDao.getAllBook();
+		System.out.println(list.size());
+//		Book i = list.get(list.size() - 1);
+//		
+//		Set<Category> cates2 = i.getCaterogies();
+//		System.out.println(cates2.toString());
+//		System.out.println(cates2.size());
 			
 	}
 }

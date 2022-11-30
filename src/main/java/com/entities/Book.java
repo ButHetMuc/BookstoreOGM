@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 
 
 @Entity
-@Table(name = "Books")
+@Table(name = "books")
 @Data
 @AllArgsConstructor 
 @NoArgsConstructor
@@ -28,7 +28,7 @@ public class Book {
 	@OneToOne
 	private Author author;
 	
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER)
 	private Set<Category> caterogies = new HashSet<Category>();
 	private int year;
 	private int price;
