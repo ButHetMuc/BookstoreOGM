@@ -18,7 +18,5 @@ public class Author {
 	private String name;
 	private String phoneNumber;
 	
-	public Author(ObjectId objectId, String string) {
-		// TODO Auto-generated constructor stub
-	}
+	
 }

@@ -17,16 +17,16 @@ import com.entities.Category;
 public class App {
 	public static void main(String[] args) {
 		BookDao bookDao = new BookDaoImpl();
-		IAuthorDao authDao = new AuthorDaoImpl();
-		
-		Author a = new Author(new ObjectId(),"Coong");
-		
-		Set<Category> cates = new HashSet<>();
-		
-		cates.add(new Category(new ObjectId(), "category 1"));
-
-		Book b = new Book(new ObjectId(), "book2", a, cates,2001, 0);
-		bookDao.add(b);
+//		IAuthorDao authDao = new AuthorDaoImpl();
+//		
+//		Author a = new Author(new ObjectId(),"Coong");
+//		
+//		Set<Category> cates = new HashSet<>();
+//		
+//		cates.add(new Category(new ObjectId(), "category 1"));
+//
+//		Book b = new Book(new ObjectId(), "book2", a, cates,2001, 0);
+//		bookDao.add(b);
 			
 	}
 }
