@@ -14,8 +14,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-//@Entity
-//@Table(name = "customers")
 @Embeddable
 public class Customer {
 	@Id

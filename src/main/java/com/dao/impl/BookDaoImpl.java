@@ -92,12 +92,23 @@ public class BookDaoImpl implements BookDao {
 
 	@Override
 	public Book findById(ObjectId bookId) {
-		// TODO Auto-generated method stub
-		return null;
+		OgmSession session = sessionFactory.getCurrentSession();
+		Transaction tx = session.beginTransaction();
+		Book b = null;
+
+		try {
+			NativeQuery<Book> query = session.createNativeQuery("db.books.find({'_id': ObjectId('"+bookId+"')})", Book.class);
+			b = query.getSingleResult();
+			tx.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			tx.rollback();
+		}
+		return b;
 	}
 
 	@Override
-	public List getAllBook() {
+	public List<Book> getAllBook() {
 		OgmSession session = sessionFactory.getCurrentSession();
 		Transaction tx = session.beginTransaction();
 		List<Book> list = null;
