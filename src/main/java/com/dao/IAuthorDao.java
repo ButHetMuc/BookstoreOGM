@@ -6,6 +6,7 @@ import com.entities.Author;
 
 public interface IAuthorDao {
 	public boolean add(Author author);
-	public boolean findById(ObjectId authorId);
+	public Author findById(ObjectId authorId);
+	public Author findBySdt(String sdtAuthor);
 
 }

@@ -19,6 +19,7 @@ public class MyServer {
 			Registry rgsty = LocateRegistry.createRegistry(Constants.PORT_RMI);
 			
 
+			
 			// rebind stub
 			IBook_dao bookStub = new BookDao_Remote();
 

@@ -39,6 +39,7 @@ public class App {
 		IAuthorDao authDao = new AuthorDaoImpl();
 		ICategoriesDao cateDao = new CategoryDaoImpl();
 		BillDao billDao = new BillDaoImpl();
+		
 
 
 		Author a = new Author(new ObjectId(), "cong", "0868283916");

@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "authors")
-
 public class Author implements Serializable {
 	/**
 	 * 

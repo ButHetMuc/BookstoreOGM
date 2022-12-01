@@ -7,6 +7,7 @@ import com.entities.Publisher;
 public interface IPublisherDao {
 	public boolean add(Publisher publisher);
 	public List<Publisher> getAll();
+	public Publisher findBySdt(String sdtPublisher);
 	
 
 }

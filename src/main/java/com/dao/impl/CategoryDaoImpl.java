@@ -62,5 +62,28 @@ public class CategoryDaoImpl implements ICategoriesDao {
 		return list;
 	}
 
+	@Override
+	public Category findByName(String nameCategory) {
+		// TODO Auto-generated method stub
+		OgmSession session = sessionFactory.getCurrentSession();
+		Transaction tr = session.getTransaction();
+		Category category = null;
+
+		try {
+			tr.begin();
+			String sql = "db.categories.find({'name': '" + nameCategory + "'})";
+			NativeQuery<Category> query = session.createNativeQuery(sql, Category.class);
+			category = query.getSingleResult();
+
+			tr.commit();
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			tr.rollback();
+		}
+
+		return category;
+	}
+
 	
 }

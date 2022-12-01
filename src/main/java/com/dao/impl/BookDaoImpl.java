@@ -1,5 +1,6 @@
 package com.dao.impl;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -10,8 +11,12 @@ import org.hibernate.ogm.OgmSessionFactory;
 import org.hibernate.query.NativeQuery;
 
 import com.dao.BookDao;
+import com.dao.IAuthorDao;
+import com.dao.IPublisherDao;
+import com.entities.Author;
 import com.entities.Book;
 import com.entities.Category;
+import com.entities.Publisher;
 import com.utils.HibernateUtils;
 
 public class BookDaoImpl implements BookDao {
@@ -26,11 +31,7 @@ public class BookDaoImpl implements BookDao {
 		Transaction tr = session.getTransaction();
 		try {
 			tr.begin();
-			for (Category caterogy : book.getCategories()) {
-				session.save(caterogy);
-			}
-			session.save(book.getAuthor());
-			session.save(book.getPublisher());
+
 			session.save(book);
 			System.out.println("add book ok");
 			tr.commit();
@@ -140,8 +141,18 @@ public class BookDaoImpl implements BookDao {
 
 		try {
 			NativeQuery<Book> query = session.createNativeQuery("db.books.find({})", Book.class);
-			list = query.getResultList();
+			List<Book> tmpList = query.getResultList();
+			if(authorName.equals("")) {
+				tx.commit();
+				return tmpList;
+			}
 			
+			list = new ArrayList<Book>();
+			for (Book book : tmpList) {
+				if(book.getAuthor().getName().equals(authorName)) {
+					list.add(book);
+				}
+			}
 			tx.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -149,5 +160,36 @@ public class BookDaoImpl implements BookDao {
 		}
 		return list;
 	}
+
+	@Override
+	public List findManyByPublisherName(String publisherName) {
+		
+		OgmSession session = sessionFactory.getCurrentSession();
+		Transaction tx = session.beginTransaction();
+		List<Book> list = null;
+
+		try {
+			NativeQuery<Book> query = session.createNativeQuery("db.books.find({})", Book.class);
+			List<Book> tmpList = query.getResultList();
+			if(publisherName.equals("")) {
+				tx.commit();
+				return tmpList;
+			}
+			
+			list = new ArrayList<Book>();
+			for (Book book : tmpList) {
+				if(book.getPublisher().getName().equals(publisherName)) {
+					list.add(book);
+				}
+			}
+			tx.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			tx.rollback();
+		}
+		return list;
+	}
+	
+	
 
 }

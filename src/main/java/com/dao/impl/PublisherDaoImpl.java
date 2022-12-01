@@ -5,8 +5,10 @@ import java.util.List;
 import org.hibernate.Transaction;
 import org.hibernate.ogm.OgmSession;
 import org.hibernate.ogm.OgmSessionFactory;
+import org.hibernate.query.NativeQuery;
 
 import com.dao.IPublisherDao;
+import com.entities.Author;
 import com.entities.Category;
 import com.entities.Publisher;
 import com.utils.HibernateUtils;
@@ -41,6 +43,27 @@ public class PublisherDaoImpl implements IPublisherDao {
 	public List<Publisher> getAll() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Publisher findBySdt(String sdtPublisher) {
+		// TODO Auto-generated method stub
+		System.out.println(sdtPublisher);
+		OgmSession session = sessionFactory.getCurrentSession();
+		Transaction tx = session.beginTransaction();
+		Publisher publisher = null;
+
+		try {
+			String sql = "db.publishers.find({'phoneNumber': '" + sdtPublisher + "'})";
+			NativeQuery<Publisher> query = session
+					.createNativeQuery(sql,Publisher.class);
+			publisher = query.getSingleResult();
+			tx.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			tx.rollback();
+		}
+		return publisher;
 	}
 
 }
