@@ -16,6 +16,10 @@ import com.utils.HibernateUtils;
 
 public class BookDao_Remote extends UnicastRemoteObject implements IBook_dao {
 	
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 private OgmSessionFactory sessionFactory ;
 	
 	public BookDao_Remote() throws RemoteException {
@@ -28,7 +32,11 @@ private OgmSessionFactory sessionFactory ;
 		Transaction tr = session.getTransaction();
 		try {
 			tr.begin();
+<<<<<<< HEAD
 			for (Category caterogy : book.getCategories()) {
+=======
+			for (Category caterogy	: book.getCategories()) {
+>>>>>>> 1a518936ea52517b80d8defae543143159a60c2e
 				session.save(caterogy);
 			}
 			session.save(book.getAuthor());

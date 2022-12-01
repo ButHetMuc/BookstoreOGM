@@ -1,5 +1,7 @@
 package com.dao.impl;
 
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -14,15 +16,19 @@ import com.entities.BillDetails;
 import com.entities.Book;
 import com.utils.HibernateUtils;
 
-public class BillDaoImpl implements BillDao {
+public class BillDaoImpl extends UnicastRemoteObject implements BillDao  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private OgmSessionFactory sessionFactory;
 	
-	public BillDaoImpl() {
+	public BillDaoImpl() throws RemoteException {
 		sessionFactory = HibernateUtils.getInstance().getSessionFactory();
 	}
 	@Override
-	public boolean add(Bill bill) {
+	public boolean add(Bill bill)throws RemoteException {
 		OgmSession session = sessionFactory.openSession();
 		Transaction tr = session.getTransaction();
 		try {
@@ -44,7 +50,7 @@ public class BillDaoImpl implements BillDao {
 
 	
 	@Override
-	public boolean update(Bill newBill) {
+	public boolean update(Bill newBill)throws RemoteException {
 		OgmSession session = sessionFactory.openSession();
 		Transaction tr = session.getTransaction();
 		try {
@@ -61,7 +67,7 @@ public class BillDaoImpl implements BillDao {
 	}
 
 	@Override
-	public Bill findById(ObjectId billId) {
+	public Bill findById(ObjectId billId)throws RemoteException {
 		return null;
 	}
 	@Override
@@ -85,7 +91,7 @@ public class BillDaoImpl implements BillDao {
 	}
 	
 	@Override
-	public List<Bill> getAllBills() {
+	public List<Bill> getAllBills()throws RemoteException {
 		OgmSession session = sessionFactory.openSession();
 		Transaction tr = session.getTransaction();
 		List<Bill> bills = null;
@@ -106,7 +112,7 @@ public class BillDaoImpl implements BillDao {
 		return bills;
 	}
 	@Override
-	public List<Bill> findByCustomerName(String customerName) {
+	public List<Bill> findByCustomerName(String customerName)throws RemoteException {
 		OgmSession session = sessionFactory.openSession();
 		Transaction tr = session.beginTransaction();
 		List<Bill> list = null;
@@ -123,7 +129,7 @@ public class BillDaoImpl implements BillDao {
 		return list;
 	}
 	@Override
-	public List findByCustomerPhonenumber(String CustomerPhonenumber) {
+	public List findByCustomerPhonenumber(String CustomerPhonenumber) throws RemoteException{
 		OgmSession session = sessionFactory.openSession();
 		Transaction tr = session.beginTransaction();
 		List<Bill> list = null;

@@ -22,6 +22,10 @@ import javax.swing.JOptionPane;
 
 public class StartedUI extends JFrame  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JMenuBar menuBar;
 	private JMenu mnTrangChu;
@@ -30,16 +34,13 @@ public class StartedUI extends JFrame  {
 	private JMenuItem mntmThongkeThuoc;
 	private JMenu mnHoaDon;
 	private JMenuItem mntmQuanLiHD;
-	private JMenuItem mntmTimKiemHD;
 	private JMenu mnKhachHang;
 	private JMenuItem mntmQuanLiKH;
 	private JMenu mnNhanVien;
 	private JMenuItem mntmQuanLiNV;
-	private JMenu mnDoanhThu;
-	private JMenuItem mntmDoanhThu;
 
 	
-	private LoginUI loginUI = new LoginUI();
+//	private LoginUI loginUI = new LoginUI();
 	private TurnoverUI turnoverUI = new TurnoverUI();
 	private BillUI hoaDonGui = new BillUI();
 	private CustomerUI khachHangGui = new CustomerUI();
@@ -47,7 +48,7 @@ public class StartedUI extends JFrame  {
 	private ManageBookUI quanLiThuocGui = new ManageBookUI();
 	private GenerateBillUI taoHoaDonGui = new GenerateBillUI();
 	private HomeUI trangChuGui = new HomeUI();
-	private StatisticalUI thongKeThuocGui = new StatisticalUI();
+//	private StatisticalUI thongKeThuocGui = new StatisticalUI();
 	private JMenuItem mntmThemHoaDon;
 	private ImageIcon icon;
 	
@@ -128,11 +129,6 @@ public class StartedUI extends JFrame  {
 		mntmQuanLiNV = new JMenuItem("Quản lí nhân viên");
 		mnNhanVien.add(mntmQuanLiNV);
 		
-		mnDoanhThu = new JMenu("Doanh thu");
-		menuBar.add(mnDoanhThu);
-		
-		mntmDoanhThu = new JMenuItem("Xem doanh thu");
-		mnDoanhThu.add(mntmDoanhThu);
 		
 		mnTrangChu.addMenuListener(new MenuListener() {
 			
@@ -191,18 +187,18 @@ public class StartedUI extends JFrame  {
 		});
 			
 
-		mntmDoanhThu.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				renderMain(turnoverUI.getContenpain(), "doanh thu");
-			}
-		});
+//		mntmDoanhThu.addActionListener(new ActionListener() {
+//			
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				renderMain(turnoverUI.getContenpain(), "doanh thu");
+//			}
+//		});
 		mntmThongkeThuoc.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				renderMain(thongKeThuocGui.getContenpain(), "Thong ke thuoc");
+				renderMain(turnoverUI.getContenpain(), "Thong ke thuoc");
 			}
 		});
 		

@@ -17,6 +17,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "publishers")
 public class Publisher implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 	@Id
 	private ObjectId id;
 	private String name;

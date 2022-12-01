@@ -30,6 +30,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -42,6 +46,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
+
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -57,6 +63,7 @@ import com.entities.Bill;
 import com.entities.BillDetails;
 import com.entities.Book;
 import com.entities.Customer;
+import com.utils.Constants;
 
 //import dao.HoaDon_dao;
 //import dao.KhachHang_dao;
@@ -73,7 +80,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JComboBox;
 import javax.swing.ScrollPaneConstants;
 
-public class GenerateBillUI extends JFrame implements ActionListener, MouseListener, KeyListener {
+public class GenerateBillUI extends JFrame implements ActionListener  {
+	
+	
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -97,7 +106,7 @@ public class GenerateBillUI extends JFrame implements ActionListener, MouseListe
 	private JLabel lblCheck;
 
 	private JLabel lblTenKH;
-	private BillDao billDao = new BillDaoImpl();
+	private BillDao billDao ;
 	private BookDao bookDao = new BookDaoImpl();
 	private List<Bill> bills;
 	private List<Book> books;
@@ -135,6 +144,14 @@ public class GenerateBillUI extends JFrame implements ActionListener, MouseListe
 //	}
 
 	public void GUI() throws SQLException {
+		
+		try {
+			billDao = (BillDao) Naming.lookup(Constants.BASE_PATH_RMI+ Constants.STUB_BILL);
+		} catch (MalformedURLException | RemoteException | NotBoundException e) {
+			
+			e.printStackTrace();
+		}
+		
 		setTitle("Tạo hóa đơn");
 		setResizable(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -195,7 +212,6 @@ public class GenerateBillUI extends JFrame implements ActionListener, MouseListe
 		pnTenKH.add(lblTenKH);
 
 		txtTenKH = new JTextField();
-		txtTenKH.setEditable(true);
 		txtTenKH.setPreferredSize(new Dimension(7, 30));
 		txtTenKH.setColumns(20);
 		pnTenKH.add(txtTenKH);
@@ -239,7 +255,7 @@ public class GenerateBillUI extends JFrame implements ActionListener, MouseListe
 		panel.add(panel_7, BorderLayout.CENTER);
 		panel_7.setLayout(new BoxLayout(panel_7, BoxLayout.Y_AXIS));
 
-		String[] cols = { "Tên sách", "giá", "Số lượng", "Nhà cung cấp" };
+		String[] cols = { "Tên sách", "giá", "Số lượng", "Tác giả" };
 		modelThuoc = new DefaultTableModel(cols, 0);
 		tblThuoc = new JTable(modelThuoc);
 		JScrollPane scrollPane = new JScrollPane(tblThuoc);
@@ -310,14 +326,12 @@ public class GenerateBillUI extends JFrame implements ActionListener, MouseListe
 		btnBoThuoc.addActionListener(this);
 		btnThemHD.addActionListener(this);
 		btnThemThuoc.addActionListener(this);
-		txtSDT.addKeyListener(this);
 
 		renderData();
 
 	}
 
 	private void renderData() throws SQLException {
-		System.out.println("as");
 		books = new ArrayList<Book>();
 		books2 = new ArrayList<Book>();
 		cartBooks = new ArrayList<BillDetails>();
@@ -352,28 +366,28 @@ public class GenerateBillUI extends JFrame implements ActionListener, MouseListe
 		tblThuoc.clearSelection();
 		modelThuoc.setRowCount(0);
 		ArrayList<Book> bills2 = new ArrayList<>();
-		
-		for( Book b : books) {
-			if(b.getQuantity() == 0) {
+
+		for (Book b : books) {
+			if (b.getQuantity() == 0) {
 				continue;
 			}
 			bills2.add(b);
-			
+
 		}
-		
-		for(Book b : bills2) {
+
+		for (Book b : bills2) {
 			modelThuoc.addRow(new Object[] { b.getName(), formatNumberForMoney(b.getPrice()), b.getQuantity(),
 					b.getAuthor().getName() });
 		}
-		
+
 //		Thuốc trong giỏ hàng
 		tblThuocTGH.clearSelection();
 		modelThuocTGH.setRowCount(0);
 		cartBooks.forEach(cthd -> {
-		
+
 			modelThuocTGH
-			.addRow(new Object[] { cthd.getBook().getName(), formatNumberForMoney(cthd.getBook().getPrice()),
-					cthd.getQuantity(), formatNumberForMoney(cthd.countSubTotal()) });
+					.addRow(new Object[] { cthd.getBook().getName(), formatNumberForMoney(cthd.getBook().getPrice()),
+							cthd.getQuantity(), formatNumberForMoney(cthd.countSubTotal()) });
 		});
 	}
 
@@ -410,19 +424,19 @@ public class GenerateBillUI extends JFrame implements ActionListener, MouseListe
 			String sdt = txtSDT.getText();
 			System.out.println(tenKh);
 
-			 if (!sdt.matches("0[1-9][0-9]{8}")) {
+			if (!sdt.matches("0[1-9][0-9]{8}")) {
 				JOptionPane.showMessageDialog(null, "Số điện thoại không hợp lệ!");
 				txtSDT.selectAll();
 				txtSDT.requestFocus();
 				return;
-				
+
 			} else if (!tenKh.matches(
 					"([A-VXYỲỌÁẦẢẤỜỄÀẠẰỆẾÝỘẬỐŨỨĨÕÚỮỊỖÌỀỂẨỚẶÒÙỒỢÃỤỦÍỸẮẪỰỈỎỪỶỞÓÉỬỴẲẸÈẼỔẴẺỠƠÔƯĂÊÂĐ][a-vxyỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđ]+)((\\s{1}[A-VXYỲỌÁẦẢẤỜỄÀẠẰỆẾÝỘẬỐŨỨĨÕÚỮỊỖÌỀỂẨỚẶÒÙỒỢÃỤỦÍỸẮẪỰỈỎỪỶỞÓÉỬỴẲẸÈẼỔẴẺỠƠÔƯĂÊÂĐ][a-vxyỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđ]+)*)")) {
 				JOptionPane.showMessageDialog(null, "Tên khách hàng không hợp lệ!");
 				txtTenKH.selectAll();
 				txtTenKH.requestFocus();
 				return;
-			} 
+			}
 
 			if (cartBooks.size() == 0) {
 				JOptionPane.showMessageDialog(contentPane, "Vui lòng thêm sách vào giỏ");
@@ -433,21 +447,34 @@ public class GenerateBillUI extends JFrame implements ActionListener, MouseListe
 			Bill bill = new Bill(new ObjectId(), new Date(), tinhTongTien(), cus, cartBooks);
 
 			try {
-				if (billDao.add(bill)) {
+				try {
+					if (billDao.add(bill)) {
 
-					int choose2 = JOptionPane.showConfirmDialog(contentPane,
-							"Đã thêm hóa đơn thành công, bạn có muốn xuất hóa đơn không ?");
-					if (choose2 == 0) {
-//						hd.setMaHD(hoaDonDao.getLastestMaHD());
-//						XuatHoaDon_gui xuaHoaDonGUI =s
-//						xuaHoaDonGUI.setVisible(true);
-//						xuaHoaDonGUI.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+						int choose2 = JOptionPane.showConfirmDialog(contentPane,
+								"Đã thêm hóa đơn thành công, bạn có muốn xuất hóa đơn không ?");
+						if (choose2 == 0) {
+							ExportBillUI export = new ExportBillUI();
+							export.setBill(bill);
+							export.setVisible(true);
+							export.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+						}
+
+						tinhTongTien();
+//					renderData2();
+						for (BillDetails d : cartBooks) {
+
+							Book a = d.getBook();
+							bookDao.update(a);
+						}
+						cartBooks.clear();
+						renderData();
+
+					} else {
+						JOptionPane.showMessageDialog(contentPane, "opps");
 					}
-					cartBooks.clear();
-					tinhTongTien();
-					renderData2();
-				} else {
-					JOptionPane.showMessageDialog(contentPane, "opps");
+				} catch (HeadlessException | RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
@@ -565,82 +592,6 @@ public class GenerateBillUI extends JFrame implements ActionListener, MouseListe
 				e1.printStackTrace();
 			}
 		}
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-//		String sdt = txtSDT.getText();
-//
-//		if (!sdt.matches("0[1-9]{1}[0-9]{8}")) {
-//			lblCheck.setText(strCheckFalse);
-//			lblCheck.setForeground(Color.RED);
-//			txtTenKH.setEditable(false);
-//			txtTenKH.setText("");
-//			return;
-//		} else {
-//			lblCheck.setText(strCheckTrue);
-//			lblCheck.setForeground(Color.GREEN);
-//			KhachHang kh = null;
-//			try {
-//				kh =  new KhachHang_dao().findKhBySdt(sdt);
-//			} catch (SQLException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
-//			
-//			if(Objects.isNull(kh)) {
-//				txtTenKH.setText("");
-//				txtTenKH.setEditable(true);
-//				
-//			}else {
-//				txtTenKH.setText(kh.getTenKhachHang());
-//				txtTenKH.setEditable(false);
-//			}
-//		}
-
 	}
 
 }
