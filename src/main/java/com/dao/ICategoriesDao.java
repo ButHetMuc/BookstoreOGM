@@ -8,3 +8,4 @@ public interface ICategoriesDao {
 	public boolean add(Category category);
 	public List getAll();
 }	
+

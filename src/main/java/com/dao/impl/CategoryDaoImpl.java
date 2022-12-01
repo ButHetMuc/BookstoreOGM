@@ -62,4 +62,5 @@ public class CategoryDaoImpl implements ICategoriesDao {
 		return list;
 	}
 
+	
 }

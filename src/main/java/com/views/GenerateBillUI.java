@@ -177,7 +177,7 @@ public class GenerateBillUI extends JFrame implements ActionListener, MouseListe
 		pnTenKH.add(lblTenKH);
 		
 		txtTenKH = new JTextField();
-		txtTenKH.setEditable(false);
+//		txtTenKH.setEditable(false);
 		txtTenKH.setPreferredSize(new Dimension(7, 30));
 		txtTenKH.setColumns(20);
 		pnTenKH.add(txtTenKH);
@@ -215,7 +215,7 @@ public class GenerateBillUI extends JFrame implements ActionListener, MouseListe
 		JPanel panel_4 = new JPanel();
 		panel.add(panel_4, BorderLayout.NORTH);
 		
-		JLabel lblNewLabel = new JLabel("Thuốc");
+		JLabel lblNewLabel = new JLabel("Sách");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		panel_4.add(lblNewLabel);
 		
@@ -225,7 +225,7 @@ public class GenerateBillUI extends JFrame implements ActionListener, MouseListe
 		panel.add(panel_7, BorderLayout.CENTER);
 		panel_7.setLayout(new BoxLayout(panel_7, BoxLayout.Y_AXIS));
 		
-		String[] cols = {"Tên Thuốc", "Đơn giá", "Số lượng", "Nhà cung cấp"};
+		String[] cols = {"Tên sách", "giá", "Số lượng", "Nhà cung cấp"};
 		modelThuoc = new DefaultTableModel(cols, 0);
 		tblThuoc = new JTable(modelThuoc);
 		JScrollPane scrollPane = new JScrollPane(tblThuoc);
@@ -285,11 +285,11 @@ public class GenerateBillUI extends JFrame implements ActionListener, MouseListe
 		panel_3.add(panel_6, BorderLayout.NORTH);
 		panel_6.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
-		JLabel lblNewLabel_1 = new JLabel("Danh sách thuốc trong giỏ hàng");
+		JLabel lblNewLabel_1 = new JLabel("giỏ hàng");
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		panel_6.add(lblNewLabel_1);
 		
-		String[] cols3 = {"Tên thuốc", "Đơn giá", "Số lượng", "Thành tiền"};
+		String[] cols3 = {"Tên sách", "giá", "Số lượng", "Thành tiền"};
 		modelThuocTGH = new DefaultTableModel(cols3, 0);
 		tblThuocTGH = new JTable(modelThuocTGH);
 		JScrollPane scrollPane_1 = new JScrollPane(tblThuocTGH);

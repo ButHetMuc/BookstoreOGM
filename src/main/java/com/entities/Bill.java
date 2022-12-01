@@ -1,5 +1,6 @@
 package com.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -19,7 +20,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "bills")
-public class Bill {
+public class Bill implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private ObjectId id;
@@ -28,6 +34,6 @@ public class Bill {
 	
 	private Customer customer;
 	
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER)
 	private Set<BillDetails> billDetails = new HashSet<BillDetails>();
 }

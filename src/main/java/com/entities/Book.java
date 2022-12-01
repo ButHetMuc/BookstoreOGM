@@ -27,11 +27,16 @@ public class Book implements Serializable {
 	@OneToOne
 	private Author author;
 	
-	@OneToMany(fetch = FetchType.EAGER)
-	private Set<Category> caterogies = new HashSet<Category>();
+	@OneToMany (fetch = FetchType.EAGER)
+	private Set<Category> categories = new HashSet<Category>();
+	
+	@OneToOne
+	private Publisher publisher;
 	private int year;
 	private int price;
 	private int quantity;
+	
+	
 	
 
 	

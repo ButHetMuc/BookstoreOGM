@@ -26,6 +26,8 @@ import com.entities.BillDetails;
 import com.entities.Book;
 import com.entities.Category;
 import com.entities.Customer;
+
+import com.entities.Publisher;
 import com.rmi.interfaces.IBook_dao;
 import com.rmi.interfaces.ITestEntityManage;
 import com.rmi.remote.BookDao_Remote;
@@ -38,37 +40,47 @@ public class App {
 		ICategoriesDao cateDao = new CategoryDaoImpl();
 		BillDao billDao = new BillDaoImpl();
 
-		Author a = new Author(new ObjectId(), "butle", "0868283916");
 
-		Set<Category> cates = new HashSet<Category>();
-
-		cates.add(new Category(new ObjectId(), "category 1"));
-		cates.add(new Category(new ObjectId(), "category 4"));
-
-		Book b = new Book(new ObjectId(), "book_name", a, cates, 2001, 1000, 4);
-		bookDao.add(b);
-
+//		Author a = new Author(new ObjectId(), "cong", "0868283916");
+//		Publisher p = new Publisher(new ObjectId(), "publisher 1", "095848333", "Ha Giang");
+//
+//		Set<Category> cates = new HashSet<Category>();
+//
+//		cates.add(new Category(new ObjectId(), "category 1"));
+//		cates.add(new Category(new ObjectId(), "category 4"));
+//
+//		Book b = new Book(new ObjectId(), "book_name", a, cates,p, 2001, 1000, 4);
+//		bookDao.add(b);
+		
+		
 //		List<Book> list = bookDao.getAllBook();
 //		System.out.println(list.size());
 //		Book i = list.get(list.size() - 1);
+		
+		// test remove book
+//		bookDao.delete(new ObjectId("6386f4d2505238452cb5c57f"));
+		
 
 //		Set<Category> cates2 = i.getCaterogies();
 //		System.out.println(cates2.toString());
 //		System.out.println(cates2.size());
-		
+//		
 		// test category
 //		cateDao.add(new Category(new ObjectId(), "cate 1"));
 //		List<Category> list =  cateDao.getAll();
 //		System.out.println(list.size());
-		Customer cus = new Customer(new ObjectId(), "butle", "123456789");
-		BillDetails detail1 = new BillDetails(1,b,2, b.getPrice());
-		BillDetails detail2 = new BillDetails(2,b,2, b.getPrice());
-		Set<BillDetails> setDetails = new HashSet<BillDetails>();
-		setDetails.add(detail1);
-		setDetails.add(detail2);
-		Bill bill = new Bill(new ObjectId(), new Date(), 100, cus ,setDetails);
-		billDao.add(bill);
-//		
+//		Customer cus = new Customer(new ObjectId(), "butle", "123456789");
+//		BillDetails detail1 = new BillDetails(new ObjectId(),b,2, b.getPrice());
+//		BillDetails detail2 = new BillDetails(new ObjectId(),b,2, b.getPrice());
+//		Set<BillDetails> setDetails = new HashSet<BillDetails>();
+//		setDetails.add(detail1);
+//		setDetails.add(detail2);
+//		Bill bill = new Bill(new ObjectId(), new Date(), 100, cus ,setDetails);
+//		billDao.add(bill);
+		List<Bill> bills = billDao.findByCustomerName("but");
+		System.out.println(bills.size());
+		List<Bill> bills1 = billDao.findByCustomerPhonenumber("1234");
+		System.out.println(bills1.size());
 
 	}
 }

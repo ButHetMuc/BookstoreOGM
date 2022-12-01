@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "publishers")
 public class Publisher {
 	@Id
-	private long id;
+	private ObjectId id;
 	private String name;
+	private String phoneNumber;
+	private String address;
 }

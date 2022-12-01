@@ -10,6 +10,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.bson.types.ObjectId;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,7 +29,7 @@ public class BillDetails implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	private long id;
+	private ObjectId id;
 	@OneToOne
 	private Book book;
 	private int quantity;
