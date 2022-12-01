@@ -1,5 +1,7 @@
 package com.entities;
 
+import java.io.Serializable;
+
 import javax.persistence.*;
 
 import org.bson.types.ObjectId;
@@ -14,7 +16,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "publishers")
-public class Publisher {
+public class Publisher implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id
 	private ObjectId id;
 	private String name;

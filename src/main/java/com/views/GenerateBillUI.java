@@ -30,6 +30,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -42,6 +46,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
+
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -57,6 +63,7 @@ import com.entities.Bill;
 import com.entities.BillDetails;
 import com.entities.Book;
 import com.entities.Customer;
+import com.utils.Constants;
 
 //import dao.HoaDon_dao;
 //import dao.KhachHang_dao;
@@ -73,7 +80,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JComboBox;
 import javax.swing.ScrollPaneConstants;
 
-public class GenerateBillUI extends JFrame implements ActionListener {
+public class GenerateBillUI extends JFrame implements ActionListener  {
+	
+	
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -97,7 +106,7 @@ public class GenerateBillUI extends JFrame implements ActionListener {
 	private JLabel lblCheck;
 
 	private JLabel lblTenKH;
-	private BillDao billDao = new BillDaoImpl();
+	private BillDao billDao ;
 	private BookDao bookDao = new BookDaoImpl();
 	private List<Bill> bills;
 	private List<Book> books;
@@ -135,6 +144,14 @@ public class GenerateBillUI extends JFrame implements ActionListener {
 //	}
 
 	public void GUI() throws SQLException {
+		
+		try {
+			billDao = (BillDao) Naming.lookup(Constants.BASE_PATH_RMI+ Constants.STUB_BILL);
+		} catch (MalformedURLException | RemoteException | NotBoundException e) {
+			
+			e.printStackTrace();
+		}
+		
 		setTitle("Tạo hóa đơn");
 		setResizable(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -430,29 +447,34 @@ public class GenerateBillUI extends JFrame implements ActionListener {
 			Bill bill = new Bill(new ObjectId(), new Date(), tinhTongTien(), cus, cartBooks);
 
 			try {
-				if (billDao.add(bill)) {
+				try {
+					if (billDao.add(bill)) {
 
-					int choose2 = JOptionPane.showConfirmDialog(contentPane,
-							"Đã thêm hóa đơn thành công, bạn có muốn xuất hóa đơn không ?");
-					if (choose2 == 0) {
-						ExportBillUI export = new ExportBillUI();
-						export.setBill(bill);
-						export.setVisible(true);
-						export.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-					}
+						int choose2 = JOptionPane.showConfirmDialog(contentPane,
+								"Đã thêm hóa đơn thành công, bạn có muốn xuất hóa đơn không ?");
+						if (choose2 == 0) {
+							ExportBillUI export = new ExportBillUI();
+							export.setBill(bill);
+							export.setVisible(true);
+							export.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+						}
 
-					tinhTongTien();
+						tinhTongTien();
 //					renderData2();
-					for (BillDetails d : cartBooks) {
+						for (BillDetails d : cartBooks) {
 
-						Book a = d.getBook();
-						bookDao.update(a);
+							Book a = d.getBook();
+							bookDao.update(a);
+						}
+						cartBooks.clear();
+						renderData();
+
+					} else {
+						JOptionPane.showMessageDialog(contentPane, "opps");
 					}
-					cartBooks.clear();
-					renderData();
-
-				} else {
-					JOptionPane.showMessageDialog(contentPane, "opps");
+				} catch (HeadlessException | RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block

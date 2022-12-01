@@ -1,15 +1,12 @@
 package com.rmi.server;
 
-import java.rmi.*;
 import java.rmi.registry.*;
-import java.rmi.server.UnicastRemoteObject;
 
+import com.dao.BillDao;
+import com.dao.impl.BillDaoImpl;
 import com.rmi.interfaces.IBook_dao;
-import com.rmi.interfaces.ITestEntityManage;
 import com.rmi.remote.BookDao_Remote;
-import com.rmi.remote.TestEntityManageRemote;
 import com.utils.Constants;
-import com.utils.MainUtils;
 
 
 public class MyServer {
@@ -21,8 +18,10 @@ public class MyServer {
 
 			// rebind stub
 			IBook_dao bookStub = new BookDao_Remote();
+			BillDao billDao = new BillDaoImpl();
 
 			rgsty.rebind(Constants.STUB_BOOK, bookStub);
+			rgsty.rebind(Constants.STUB_BILL, billDao);
 			System.out.println("Rebind stub ok!");
 		} catch (Exception e) {
 			System.out.println(e);

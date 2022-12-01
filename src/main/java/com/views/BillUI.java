@@ -8,6 +8,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -24,6 +28,7 @@ import javax.swing.table.DefaultTableModel;
 import com.dao.BillDao;
 import com.dao.impl.BillDaoImpl;
 import com.entities.Bill;
+import com.utils.Constants;
 
 //import dao.HoaDon_dao;
 
@@ -47,27 +52,28 @@ public class BillUI extends JFrame implements ActionListener, MouseListener, Key
 	public JPanel pnMain;
 	private JTable tableHD;
 	private JPanel panel_1;
-	private JTextField txtTimMaHDDV;
 
 	private JTextField txtTongTien;
-	private JTextField txtDiaChi;
 	private JComboBox cboTimKiem;
-	private JTable tblDSThuoc;
-	private JTextField textField;
-	private JTextField textField_1;
 	private JLabel lblMaHD;
 	private JTextField txtMaHD;
 
 	private JTextField txtSdt;
 	private JTextField txtTenKH;
 	private JTextField txtTimKiem;
-	private boolean isTimKiem = false;
 	private JButton btnXuatHoaDon;
 
 	private List<Bill> bills;
-	private BillDao billDao = new BillDaoImpl();
+	private BillDao billDao ;
 
 	public BillUI() throws SQLException {
+		try {
+			System.out.println("a1");
+			billDao = (BillDao) Naming.lookup(Constants.BASE_PATH_RMI + Constants.STUB_BILL);
+		} catch (MalformedURLException | RemoteException | NotBoundException e) {
+			e.printStackTrace();
+			System.out.println("a2");
+		}
 
 		setTitle("Quản lý hóa đơn");
 		setResizable(true);
@@ -215,8 +221,14 @@ public class BillUI extends JFrame implements ActionListener, MouseListener, Key
 		return Double.parseDouble(tmp);
 	}
 
-	public void renderData() throws SQLException {
-		bills = billDao.getAllBills();
+	public void renderData() {
+		System.out.println("a");
+		try {
+			bills = billDao.getAllBills();
+		} catch (RemoteException e) {
+			System.out.println("b");
+			e.printStackTrace();
+		}
 
 		tableHD.clearSelection();
 		modelHD.getDataVector().removeAllElements();

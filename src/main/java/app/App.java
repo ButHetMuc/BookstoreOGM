@@ -34,7 +34,7 @@ import com.rmi.remote.BookDao_Remote;
 import com.utils.Constants;
 
 public class App {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws RemoteException {
 		BookDao bookDao = new BookDaoImpl();
 		IAuthorDao authDao = new AuthorDaoImpl();
 		ICategoriesDao cateDao = new CategoryDaoImpl();
