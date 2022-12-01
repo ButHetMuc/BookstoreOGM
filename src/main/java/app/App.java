@@ -41,16 +41,16 @@ public class App {
 		BillDao billDao = new BillDaoImpl();
 
 
-//		Author a = new Author(new ObjectId(), "cong", "0868283916");
-//		Publisher p = new Publisher(new ObjectId(), "publisher 1", "095848333", "Ha Giang");
-//
-//		Set<Category> cates = new HashSet<Category>();
-//
-//		cates.add(new Category(new ObjectId(), "category 1"));
-//		cates.add(new Category(new ObjectId(), "category 4"));
-//
-//		Book b = new Book(new ObjectId(), "book_name", a, cates,p, 2001, 1000, 4);
-//		bookDao.add(b);
+		Author a = new Author(new ObjectId(), "cong", "0868283916");
+		Publisher p = new Publisher(new ObjectId(), "publisher 1", "095848333", "Ha Giang");
+
+		Set<Category> cates = new HashSet<Category>();
+
+		cates.add(new Category(new ObjectId(), "category 1"));
+		cates.add(new Category(new ObjectId(), "category 4"));
+
+		Book b = new Book(new ObjectId(), "book_name", a, cates,p, 2001, 1000, 4);
+		bookDao.add(b);
 		
 		
 //		List<Book> list = bookDao.getAllBook();

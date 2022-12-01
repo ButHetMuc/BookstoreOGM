@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.FlowLayout;
@@ -33,6 +34,7 @@ import java.util.Set;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import java.awt.Dimension;
@@ -43,6 +45,8 @@ import java.awt.Color;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -74,7 +78,6 @@ import javax.swing.Box;
 public class ManageBookUI extends JFrame implements ActionListener, MouseListener, KeyListener {
 
 	private JPanel contentPane;
-	private JComboBox cboLoaiBook;
 	private JTextField txtMaBook;
 	private JTextField txtTenBook;
 	private JComboBox cboTacGia;
@@ -84,21 +87,35 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 	private JTextField txtNamXuatBan;
 	private JTextField txtDonGia;
 	private JTextField txtSoLuong;
+
+	private JTextField txtTenTacGia;
+	private JTextField txtSdtTacGia;
+	private JTextField txtTheLoai;
+
+	private JPanel pnListTheLoai;
+
 	private JButton btnThemMoi;
 	private JButton btnSua;
 	private JButton btnXoa;
 	private JButton btnLamMoi;
 	private JButton btnTimBook;
+	private JButton btnSuaLoaiSach;
 	private List<Book> dsBooks;
+	private List<Category> dsLoaiBook;
+	private List<Author> dsTacGia;
+	private List<Author> dsNhaXuatBan;
+	private JList<String> JListTheLoai;
+
 //	private ArrayList<NhaCungCap> dsNhaCungCaps;
-//	private ArrayList<LoaiBook> dsLoaiBooks;
+	private ArrayList<Category> dsLoaiBooks;
 	private BookDao bookDao;
 	private IAuthorDao authorDao;
 	private ICategoriesDao categoryDao;
 //	private NhaCungCap_dao nhaCungCapDao;
 //	private LoaiBook_dao loaiBookDao;
-	private DefaultComboBoxModel<String> modelCboLoaiBook;
-	private DefaultComboBoxModel<String> modelCboNhaCungCap;
+	private DefaultComboBoxModel<String> modelCboCategories;
+	private DefaultComboBoxModel<String> modelCboPublisher;
+	private DefaultListModel<String> modelLoai;
 	private JComboBox cboTimTheo;
 
 	/**
@@ -159,24 +176,6 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 		lblTitile.setFont(new Font("Tahoma", Font.BOLD, 17));
 		pnLblThongTin.add(lblTitile);
 
-		JPanel pnLoaiTimKiem = new JPanel();
-		FlowLayout flowLayout_1 = (FlowLayout) pnLoaiTimKiem.getLayout();
-		flowLayout_1.setAlignment(FlowLayout.RIGHT);
-		pnThongTin.add(pnLoaiTimKiem);
-
-		JPanel pnLoaiBook = new JPanel();
-		FlowLayout flowLayout_5 = (FlowLayout) pnLoaiBook.getLayout();
-		flowLayout_5.setAlignment(FlowLayout.LEFT);
-		pnThongTin.add(pnLoaiBook);
-
-		JLabel lblLoaiBook = new JLabel("Thể loại");
-		lblLoaiBook.setPreferredSize(new Dimension(80, 14));
-		pnLoaiBook.add(lblLoaiBook);
-
-		addDataCboLoaiBook();
-		cboLoaiBook.setPreferredSize(new Dimension(204, 23));
-		pnLoaiBook.add(cboLoaiBook);
-
 		JPanel pnMaBook = new JPanel();
 		FlowLayout fl_pnMaBook = (FlowLayout) pnMaBook.getLayout();
 		fl_pnMaBook.setAlignment(FlowLayout.LEFT);
@@ -192,6 +191,11 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 		txtMaBook.setColumns(22);
 		txtMaBook.disable();
 
+		JPanel pnLoaiTimKiem = new JPanel();
+		FlowLayout flowLayout_1 = (FlowLayout) pnLoaiTimKiem.getLayout();
+		flowLayout_1.setAlignment(FlowLayout.RIGHT);
+		pnThongTin.add(pnLoaiTimKiem);
+
 		JPanel pnTenBook = new JPanel();
 		FlowLayout fl_pnTenBook = (FlowLayout) pnTenBook.getLayout();
 		fl_pnTenBook.setAlignment(FlowLayout.LEFT);
@@ -206,19 +210,63 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 		pnTenBook.add(txtTenBook);
 		txtTenBook.setColumns(22);
 
-		JPanel pnNhaCC = new JPanel();
-		FlowLayout fl_pnNhaCC = (FlowLayout) pnNhaCC.getLayout();
-		fl_pnNhaCC.setAlignment(FlowLayout.LEFT);
-		pnThongTin.add(pnNhaCC);
+		// loai
+		JPanel pnTheLoai = new JPanel();
+		pnThongTin.add(pnTheLoai);
+		FlowLayout fl_pnTheLoai = (FlowLayout) pnTheLoai.getLayout();
+		fl_pnTheLoai.setAlignment(FlowLayout.LEFT);
+		pnThongTin.add(pnTheLoai);
 
-		JLabel lblTacGia = new JLabel("Tác giả");
-		lblTacGia.setPreferredSize(new Dimension(80, 14));
-		pnNhaCC.add(lblTacGia);
+		JLabel lblTheLoai = new JLabel("Thể loại");
+		lblTheLoai.setPreferredSize(new Dimension(80, 14));
+		pnTheLoai.add(lblTheLoai);
 
-		addDatacboTacGia();
-		cboTacGia.setPreferredSize(new Dimension(204, 23));
+		txtTheLoai = new JTextField();
+		txtTheLoai.setPreferredSize(new Dimension(7, 23));
+		pnTheLoai.add(txtTheLoai);
+		txtTheLoai.setColumns(16);
+		txtTheLoai.setEditable(false);
 
-		pnNhaCC.add(cboTacGia);
+		btnSuaLoaiSach = new JButton("Sửa");
+		pnTheLoai.add(btnSuaLoaiSach);
+
+		// checkbox group
+		pnListTheLoai = new JPanel();
+		pnThongTin.add(pnListTheLoai);
+		addDataCboLoaiBook();
+		pnListTheLoai.add(JListTheLoai);
+		pnListTheLoai.hide();
+		// end-loai
+
+		JPanel pnTenTacGia = new JPanel();
+		pnThongTin.add(pnTenTacGia);
+		FlowLayout fl_pnTenTacGia = (FlowLayout) pnTenTacGia.getLayout();
+		fl_pnTenTacGia.setAlignment(FlowLayout.LEFT);
+		pnThongTin.add(pnTenTacGia);
+
+		JLabel lblTenTacGia = new JLabel("Tên tác giả");
+		lblTenTacGia.setPreferredSize(new Dimension(80, 14));
+		pnTenTacGia.add(lblTenTacGia);
+
+		txtTenTacGia = new JTextField();
+		txtTenTacGia.setPreferredSize(new Dimension(7, 23));
+		pnTenTacGia.add(txtTenTacGia);
+		txtTenTacGia.setColumns(22);
+
+		JPanel pnSdtTacGia = new JPanel();
+		pnThongTin.add(pnSdtTacGia);
+		FlowLayout fl_pnSdtTacGia = (FlowLayout) pnSdtTacGia.getLayout();
+		fl_pnSdtTacGia.setAlignment(FlowLayout.LEFT);
+		pnThongTin.add(pnSdtTacGia);
+
+		JLabel lblSdtTacGia = new JLabel("Sđt tác giả");
+		lblSdtTacGia.setPreferredSize(new Dimension(80, 14));
+		pnSdtTacGia.add(lblSdtTacGia);
+
+		txtSdtTacGia = new JTextField();
+		txtSdtTacGia.setPreferredSize(new Dimension(7, 23));
+		pnSdtTacGia.add(txtSdtTacGia);
+		txtSdtTacGia.setColumns(22);
 
 		JPanel pnNgaySanXuat = new JPanel();
 		pnThongTin.add(pnNgaySanXuat);
@@ -331,7 +379,6 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 		categoryDao = new CategoryDaoImpl();
 
 		renderData();
-		addDataCboLoaiBook();
 
 		btnLamMoi.addActionListener(this);
 		btnThemMoi.addActionListener(this);
@@ -340,6 +387,45 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 		btnTimBook.addActionListener(this);
 		tblDsBook.addMouseListener(this);
 		txtTimKiem.addKeyListener(this);
+		btnSuaLoaiSach.addActionListener(this);
+		JListTheLoai.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				List<String> list = JListTheLoai.getSelectedValuesList();
+				String str = "";
+				for (String string : list) {
+					str += string + ",";
+				}
+				txtTheLoai.setText(str);
+
+			}
+		});
 
 	}
 
@@ -359,16 +445,17 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 	}
 
 	private void addDataCboLoaiBook() {
-//		loaiBookDao = new LoaiBook_dao();
-//		dsLoaiBooks = new ArrayList<LoaiBook>();
-//		dsLoaiBooks = loaiBookDao.getDsLoaiBook();
-//		modelCboLoaiBook = new DefaultComboBoxModel<String>();
-//		for (LoaiBook lt : dsLoaiBooks) {
-//			modelCboLoaiBook.addElement(lt.getTenLoai());
-//		}
-//		cboLoaiBook = new JComboBox<String>(modelCboLoaiBook);
-		String[] loaisach = { "Novel", "Comic" };
-		cboLoaiBook = new JComboBox<String>(loaisach);
+		categoryDao = new CategoryDaoImpl();
+		dsLoaiBook = categoryDao.getAll();
+
+		modelLoai = new DefaultListModel<String>();
+
+		for (Category category : dsLoaiBook) {
+			modelLoai.addElement(category.getName());
+		}
+
+		JListTheLoai = new JList<>(modelLoai);
+
 	}
 
 	private void renderData() {
@@ -394,8 +481,10 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 		Object o = e.getSource();
 		if (o.equals(btnLamMoi)) {
 			setNull();
+			return;
 		}
 		if (o.equals(btnThemMoi)) {
+			
 			if (btnThemMoi.getText().equals("Thêm")) {
 				setNull();
 				btnSua.setText("Lưu");
@@ -403,12 +492,14 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 				btnXoa.setEnabled(false);
 				btnSua.setEnabled(true);
 				btnLamMoi.setEnabled(true);
+				return;
 			} else if (btnThemMoi.getText().equals("Hủy")) {
 				btnSua.setText("Sửa");
 				btnThemMoi.setText("Thêm");
 				btnXoa.setEnabled(true);
 				btnLamMoi.setEnabled(true);
 			}
+			return;
 		}
 
 		if (o.equals(btnSua) && btnSua.getText().equals("Lưu")) {
@@ -416,7 +507,7 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 
 				// static data
 
-				Author a = new Author(new ObjectId(), "cong", "0868283916");
+				Author a = new Author(new ObjectId(), txtTenTacGia.getText(),txtSdtTacGia.getText());
 				Publisher p = new Publisher(new ObjectId(), "publisher 1", "095848333", "Ha Giang");
 				Set<Category> cates = new HashSet<>();
 				cates.add(new Category(new ObjectId(), "category 1"));
@@ -440,6 +531,7 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 				}
 				setNull();
 			}
+			return;
 		}
 
 		if (o.equals(btnSua) && btnSua.getText().equals("Sửa")) {
@@ -472,6 +564,7 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 
 				}
 			}
+			return;
 		}
 		// done
 		if (o.equals(btnXoa)) {
@@ -496,14 +589,25 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 
 				}
 			}
+			return;
+		}
+
+		// sửa loại sách
+		if (o.equals(btnSuaLoaiSach) && btnSuaLoaiSach.getText() == "Sửa") {
+
+			toggleShowJList(true);
+			return;
+		}
+
+		if (o.equals(btnSuaLoaiSach) && btnSuaLoaiSach.getText() == "Lưu") {
+			toggleShowJList(false);
+			return;
 		}
 
 	}
 
 	private void setNull() {
 //		renderData();
-		cboLoaiBook.setSelectedIndex(0);
-		cboTacGia.setSelectedIndex(0);
 		txtMaBook.setText("");
 		txtTenBook.setText("");
 		txtNamXuatBan.setText("");
@@ -595,6 +699,16 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 		return this.contentPane;
 	}
 
+	private void toggleShowJList(boolean isShow) {
+		if (isShow) {
+			btnSuaLoaiSach.setText("Lưu");
+			pnListTheLoai.show();
+		} else {
+			btnSuaLoaiSach.setText("Sửa");
+			pnListTheLoai.hide();
+		}
+	}
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		int row = tblDsBook.getSelectedRow();
@@ -602,18 +716,34 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 		if (row == -1) {
 			btnSua.setEnabled(false);
 			btnXoa.setEnabled(false);
+		} else {
+			JListTheLoai.clearSelection();
+			toggleShowJList(false);
+			btnSua.setEnabled(true);
+			btnXoa.setEnabled(true);
+
+			txtMaBook.setText(modelDsBook.getValueAt(row, 0).toString());
+			txtTenBook.setText((String) modelDsBook.getValueAt(row, 1));
+			Set<Category> categories = dsBooks.get(row).getCategories();
+			String str = "";
+			int[] selectedIndies = new int[categories.size()];
+			int count = 0;
+			for (Category category : categories) {
+				str += category.getName() + ",";
+				selectedIndies[count] = modelLoai.indexOf(category.getName());
+				count++;
+				
+			}
+			JListTheLoai.setSelectedIndices(selectedIndies);
+			txtTheLoai.setText(str);
+			txtNamXuatBan.setText(modelDsBook.getValueAt(row, 3).toString());
+			
+			txtTenTacGia.setText(dsBooks.get(row).getAuthor().getName());
+			txtSdtTacGia.setText(dsBooks.get(row).getAuthor().getPhoneNumber());
+
+			txtDonGia.setText(modelDsBook.getValueAt(row, 5).toString());
+			txtSoLuong.setText(modelDsBook.getValueAt(row, 6).toString());
 		}
-
-		btnSua.setEnabled(true);
-		btnXoa.setEnabled(true);
-
-		txtMaBook.setText(modelDsBook.getValueAt(row, 0).toString());
-		txtTenBook.setText((String) modelDsBook.getValueAt(row, 1));
-//		cboLoaiBook.setSelectedItem(modelDsBook.getValueAt(row, 2));
-		txtNamXuatBan.setText(modelDsBook.getValueAt(row, 3).toString());
-
-		txtDonGia.setText(modelDsBook.getValueAt(row, 5).toString());
-		txtSoLuong.setText(modelDsBook.getValueAt(row, 6).toString());
 	}
 
 	@Override
@@ -644,8 +774,6 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 	public void keyTyped(KeyEvent e) {
 	}
 
-	
-
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
@@ -675,8 +803,8 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 			renderDataTimKiem(list);
 			System.out.println(list.size());
 		}
-		
-		else if(timTheo.equals("Tên Tác Giả")) {
+
+		else if (timTheo.equals("Tên Tác Giả")) {
 			List<Book> list = bookDao.findManyByAuthorName(txtTimKiem.getText());
 			renderDataTimKiem(list);
 			System.out.println(list.size());
