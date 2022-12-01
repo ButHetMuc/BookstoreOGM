@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-
+import com.entities.Bill;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -38,7 +38,6 @@ public class ExportBillUI extends JFrame implements Printable{
 	private JPanel contentPane;
 	private DefaultTableModel modelDSSP;
 	private JTable tblDSSP;
-//	private HoaDon hd;
 	private JLabel lblMaHD;
 	private JLabel lblNhanVien;
 	private JLabel lblTenKH;
@@ -49,6 +48,8 @@ public class ExportBillUI extends JFrame implements Printable{
 	private double tongTien;
 	private JButton btnInHoaDon;
 	private JPanel pnFoot;
+	
+	private Bill bill;
 	
 	/**
 	 * Launch the application.
@@ -221,33 +222,32 @@ public class ExportBillUI extends JFrame implements Printable{
 	}
 	
 	public void renderData() {
-//		lblMaHD.setText(String.valueOf(hd.getMaHD()));
-//		lblNhanVien.setText(hd.getNhanVien().getTenNhanVien());
-//		lblTenKH.setText(hd.getKhachHang().getTenKhachHang());
-//		lblSDT.setText(hd.getKhachHang().getSoDienThoai());
-//		lblNgayLap.setText(hd.getNgayLap().toString());
-//		
-//		tongTien = 0.0;
-//		modelDSSP.getDataVector().removeAllElements();
-//		
-//		
-//		hd.getChiTietHoaDons().forEach(cthd -> {
-//			modelDSSP.addRow(new Object[] {
-//				cthd.getThuoc().getTenThuoc(),
-//				formatNumberForMoney(cthd.getThuoc().getDonGia()),
-//				cthd.getSoLuong(),
-//				formatNumberForMoney(cthd.getThuoc().getDonGia() * cthd.getSoLuong())
-//			});
-//			tongTien += cthd.getThuoc().getDonGia() * cthd.getSoLuong();
-//		});
-//		
-//		lblTongTien.setText(formatNumberForMoney(tongTien));
+		lblMaHD.setText(String.valueOf(bill.getId()));
+		lblTenKH.setText(bill.getCustomer().getName());
+		lblSDT.setText(bill.getCustomer().getPhoneNumber());
+		lblNgayLap.setText(bill.getCreateAt().toString());
+		
+		tongTien = 0.0;
+		modelDSSP.getDataVector().removeAllElements();
+		
+		
+		bill.getBillDetails().forEach(cthd -> {
+			modelDSSP.addRow(new Object[] {
+				cthd.getBook().getName(),
+				formatNumberForMoney(cthd.getBook().getPrice()),
+				cthd.getQuantity(),
+				formatNumberForMoney(cthd.getBook().getPrice() * cthd.getQuantity())
+			});
+			tongTien += cthd.getBook().getPrice() * cthd.getQuantity();
+		});
+		
+		lblTongTien.setText(formatNumberForMoney(tongTien));
 	}
 	
-//	public void setHoaDon(HoaDon hd) {
-//		this.hd = hd;
-//		renderData();
-//	}
+	public void setBill(Bill bill) {
+		this.bill = bill;
+		renderData();
+	}
 	
 	private void printFrame(){
 	    PrinterJob printerJob = PrinterJob.getPrinterJob();

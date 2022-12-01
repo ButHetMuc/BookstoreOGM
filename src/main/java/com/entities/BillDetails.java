@@ -33,6 +33,10 @@ public class BillDetails implements Serializable {
 	@OneToOne
 	private Book book;
 	private int quantity;
-	private double subTotal;
+//	private double subTotal;
+	
+	public double countSubTotal() {
+		return this.quantity * this.book.getPrice();
+	}
 	
 }

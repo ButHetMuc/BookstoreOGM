@@ -97,14 +97,14 @@ public class StartedUI extends JFrame  {
 		mnTrangChu = new JMenu("Trang chủ");
 		menuBar.add(mnTrangChu);
 		
-		mnThuoc = new JMenu("Thuốc");
+		mnThuoc = new JMenu("Sách");
 		menuBar.add(mnThuoc);
 		
-		mntmQuanLiThuoc = new JMenuItem("Quản lí thuốc");
+		mntmQuanLiThuoc = new JMenuItem("Quản lí sách");
 		mnThuoc.add(mntmQuanLiThuoc);
 		
 		
-		mntmThongkeThuoc = new JMenuItem("Thống kê thuốc");
+		mntmThongkeThuoc = new JMenuItem("Thống kê sách");
 		mnThuoc.add(mntmThongkeThuoc);
 		
 		mnHoaDon = new JMenu("Hóa đơn");

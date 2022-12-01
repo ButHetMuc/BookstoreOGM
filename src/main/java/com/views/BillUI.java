@@ -250,20 +250,20 @@ public class BillUI extends JFrame implements ActionListener, MouseListener, Key
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-//		Object o = e.getSource();
-//
-//		if (o.equals(btnXuatHoaDon)) {
-//			int idx = tableHD.getSelectedRow();
-//			if (idx == -1) {
-//				JOptionPane.showMessageDialog(pnMain, "Vui lòng chọn hóa đơn để xuất");
-//				return;
-//			}
-//
-//			XuatBillUI xuaHoaDonGUI = new XuatBillUI();
-//			xuaHoaDonGUI.setHoaDon(dshd.get(idx));
-//			xuaHoaDonGUI.setVisible(true);
-//			xuaHoaDonGUI.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-//		}
+		Object o = e.getSource();
+
+		if (o.equals(btnXuatHoaDon)) {
+			int idx = tableHD.getSelectedRow();
+			if (idx == -1) {
+				JOptionPane.showMessageDialog(pnMain, "Vui lòng chọn hóa đơn để xuất");
+				return;
+			}
+
+			ExportBillUI export = new ExportBillUI();
+			export.setBill(bills.get(idx));
+			export.setVisible(true);
+			export.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		}
 	}
 
 

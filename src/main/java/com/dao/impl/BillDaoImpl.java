@@ -27,7 +27,7 @@ public class BillDaoImpl implements BillDao {
 		Transaction tr = session.getTransaction();
 		try {
 			tr.begin();
-			session.save(bill.getCustomer());
+//			session.save(bill.getCustomer());
 			for(BillDetails d : bill.getBillDetails()) {
 				session.save(d);
 			}

@@ -11,7 +11,7 @@ public interface BookDao {
 	public boolean delete(ObjectId bookId);
 	public boolean update(Book newBook);
 	public Book findById(ObjectId bookId);
-	public List getAllBook();
+	public List<Book> getAllBook();
 	public List findManyByName(String bookName);
 	public List findManyByAuthorName(String authorName);
 }
