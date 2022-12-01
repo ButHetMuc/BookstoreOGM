@@ -74,7 +74,7 @@ public class StatisticalUI extends JFrame implements ActionListener, MouseListen
 	private JPanel contentPane;
 	private JPanel out;
 	private DefaultTableModel model;
-	String[] colsHD = { "Mã thuốc", "Tên thuốc","Số lượng","Tổng tiền","Hạn sử dụng"};
+	String[] colsHD = { "Mã Sách", "Tên Sách","Số lượng","Tổng tiền"};
 	private JButton btnThuocBanChay;
 	
 	private DefaultComboBoxModel<String> modelLoaiThongKe;
