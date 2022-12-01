@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -31,9 +32,9 @@ public class Bill implements Serializable {
 	private ObjectId id;
 	private Date createAt;
 	private double total;
-	
+	@Embedded
 	private Customer customer;
 	
 	@OneToMany(fetch = FetchType.EAGER)
-	private Set<BillDetails> billDetails = new HashSet<BillDetails>();
+	private List<BillDetails> billDetails = new ArrayList<BillDetails>();
 }

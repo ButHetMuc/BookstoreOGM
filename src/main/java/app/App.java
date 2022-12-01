@@ -54,6 +54,7 @@ public class App {
 		
 		
 //		List<Book> list = bookDao.getAllBook();
+//		System.out.println(list.toString());
 //		System.out.println(list.size());
 //		Book i = list.get(list.size() - 1);
 		
@@ -66,21 +67,22 @@ public class App {
 //		System.out.println(cates2.size());
 //		
 		// test category
-//		cateDao.add(new Category(new ObjectId(), "cate 1"));
+		cateDao.add(new Category(new ObjectId(), "cate 1"));
 //		List<Category> list =  cateDao.getAll();
 //		System.out.println(list.size());
-//		Customer cus = new Customer(new ObjectId(), "butle", "123456789");
-//		BillDetails detail1 = new BillDetails(new ObjectId(),b,2, b.getPrice());
-//		BillDetails detail2 = new BillDetails(new ObjectId(),b,2, b.getPrice());
-//		Set<BillDetails> setDetails = new HashSet<BillDetails>();
-//		setDetails.add(detail1);
-//		setDetails.add(detail2);
-//		Bill bill = new Bill(new ObjectId(), new Date(), 100, cus ,setDetails);
-//		billDao.add(bill);
-		List<Bill> bills = billDao.findByCustomerName("but");
-		System.out.println(bills.size());
-		List<Bill> bills1 = billDao.findByCustomerPhonenumber("1234");
-		System.out.println(bills1.size());
+		Customer cus = new Customer(new ObjectId(), "butle", "123456789");
+		BillDetails detail1 = new BillDetails(new ObjectId(),b,2 );
+		BillDetails detail2 = new BillDetails(new ObjectId(),b,2);
+		List<BillDetails> setDetails = new ArrayList<BillDetails>();
+		setDetails.add(detail1);
+		setDetails.add(detail2);
+		Bill bill = new Bill(new ObjectId(), new Date(), 100, cus ,setDetails);
+		billDao.add(bill);
+//		List<Bill> bills = billDao.findByCustomerName("but");
+//		System.out.println(bills.size());
+//		List<Bill> bills1 = billDao.findByCustomerPhonenumber("1234");
+//		System.out.println(bills1.size());
+		System.out.println(billDao.getAllBills().size());
 
 	}
 }
