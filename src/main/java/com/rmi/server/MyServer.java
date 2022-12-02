@@ -14,8 +14,6 @@ import com.dao.impl.BillDaoImpl;
 import com.dao.impl.BookDaoImpl;
 import com.dao.impl.CategoryDaoImpl;
 import com.dao.impl.PublisherDaoImpl;
-import com.rmi.interfaces.IBook_dao;
-import com.rmi.remote.BookDao_Remote;
 import com.utils.Constants;
 
 

@@ -30,9 +30,6 @@ import com.entities.Category;
 import com.entities.Customer;
 
 import com.entities.Publisher;
-import com.rmi.interfaces.IBook_dao;
-import com.rmi.interfaces.ITestEntityManage;
-import com.rmi.remote.BookDao_Remote;
 import com.utils.Constants;
 
 public class App {
