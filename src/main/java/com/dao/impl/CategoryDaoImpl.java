@@ -1,5 +1,7 @@
 package com.dao.impl;
 
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 
 import org.hibernate.Transaction;
@@ -12,10 +14,10 @@ import com.entities.Book;
 import com.entities.Category;
 import com.utils.HibernateUtils;
 
-public class CategoryDaoImpl implements ICategoriesDao {
+public class CategoryDaoImpl extends UnicastRemoteObject implements ICategoriesDao {
 	private OgmSessionFactory sessionFactory;
 
-	public CategoryDaoImpl() {
+	public CategoryDaoImpl() throws RemoteException {
 		sessionFactory = HibernateUtils.getInstance().getSessionFactory();
 	}
 

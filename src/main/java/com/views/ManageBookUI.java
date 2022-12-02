@@ -159,6 +159,18 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 	 */
 	public ManageBookUI() throws SQLException {
 
+		// init dao
+		try {
+			bookDao = new BookDaoImpl();
+			authorDao = new AuthorDaoImpl();
+			categoryDao = new CategoryDaoImpl();
+			publisherDao = new PublisherDaoImpl();
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, 1300, 700);
 		contentPane = new JPanel();
@@ -439,12 +451,6 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 
 		pnCenter.add(scrtbl, BorderLayout.CENTER);
 
-		// init dao
-		bookDao = new BookDaoImpl();
-		authorDao = new AuthorDaoImpl();
-		categoryDao = new CategoryDaoImpl();
-		publisherDao = new PublisherDaoImpl();
-
 		disableEdit();
 		renderData();
 
@@ -510,7 +516,13 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 				String sdtAuthor = txtSdtTacGia.getText();
 				// sửa if thành regex số điện thoại
 				if (sdtAuthor.length() == 10) {
-					Author author = authorDao.findBySdt(sdtAuthor);
+					Author author = null;
+					try {
+						author = authorDao.findBySdt(sdtAuthor);
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					if (author != null) {
 						txtTenTacGia.setText(author.getName());
 					} else {
@@ -544,7 +556,13 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 				String sdtNhaXuatBan = txtSdtNhaXuatBan.getText();
 				// sửa if thành regex số điện thoại
 				if (sdtNhaXuatBan.length() == 10) {
-					Publisher nhaXuatBan = publisherDao.findBySdt(sdtNhaXuatBan);
+					Publisher nhaXuatBan= null;
+					try {
+						nhaXuatBan = publisherDao.findBySdt(sdtNhaXuatBan);
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					if (nhaXuatBan != null) {
 						txtTenNhaXuatBan.setText(nhaXuatBan.getName());
 						txtDiaChiNhaXuatBan.setText(nhaXuatBan.getAddress());
@@ -576,8 +594,14 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 	}
 
 	private void addDataCboLoaiBook() {
-		categoryDao = new CategoryDaoImpl();
-		dsLoaiBook = categoryDao.getAll();
+		
+		
+		try {
+			dsLoaiBook = categoryDao.getAll();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		modelLoai = new DefaultListModel<String>();
 
@@ -590,7 +614,12 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 	}
 
 	private void renderData() {
-		dsBooks = bookDao.getAllBook();
+		try {
+			dsBooks = bookDao.getAllBook();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		System.out.println("render data," + dsBooks.size());
 		modelDsBook.setRowCount(0);
@@ -653,17 +682,39 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 					if (checkData()) {
 						// static data
 						
-						Author author = authorDao.findBySdt(txtSdtTacGia.getText());
+						Author author = null;
+						try {
+							author = authorDao.findBySdt(txtSdtTacGia.getText());
+						} catch (RemoteException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 						if (author == null) {
 							author = new Author(new ObjectId(), txtTenTacGia.getText(), txtSdtTacGia.getText());
-							authorDao.add(author);
+							try {
+								authorDao.add(author);
+							} catch (RemoteException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
 							System.out.println("add new author");
 						}
-						Publisher publisher = publisherDao.findBySdt(txtSdtNhaXuatBan.getText());
+						Publisher publisher = null;
+						try {
+							publisher = publisherDao.findBySdt(txtSdtNhaXuatBan.getText());
+						} catch (RemoteException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 						if (publisher == null) {
 							publisher = new Publisher(new ObjectId(), txtTenNhaXuatBan.getText(), txtSdtNhaXuatBan.getText(),
 									txtDiaChiNhaXuatBan.getText());
-							publisherDao.add(publisher);
+							try {
+								publisherDao.add(publisher);
+							} catch (RemoteException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
 							System.out.println("add new pub");
 
 						}
@@ -672,7 +723,13 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 						Set<Category> cates = new HashSet<>();
 						String[] listCategoryName = txtTheLoai.getText().split(",");
 						for (String categoryName : listCategoryName) {
-							Category category = categoryDao.findByName(categoryName);
+							Category category= null;
+							try {
+								category = categoryDao.findByName(categoryName);
+							} catch (RemoteException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
 							if(category == null) {
 								System.out.println("err category empty");
 							}
@@ -688,7 +745,13 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 						Book newBook = new Book(bookId, name, author, cates, publisher, namXuatBan, donGia, soLuong);
 
 
-						boolean kq = bookDao.update(newBook);
+						boolean kq = false;
+						try {
+							kq = bookDao.update(newBook);
+						} catch (RemoteException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 						if (kq) {
 							JOptionPane.showMessageDialog(null, "Sửa thành công");
 							
@@ -714,23 +777,51 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 
 				// static data
 				
-				Author author = authorDao.findBySdt(txtSdtTacGia.getText());
+				Author author = null;
+				try {
+					author = authorDao.findBySdt(txtSdtTacGia.getText());
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				if (author == null) {
 					author = new Author(new ObjectId(), txtTenTacGia.getText(), txtSdtTacGia.getText());
-					authorDao.add(author);
+					try {
+						authorDao.add(author);
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
-				Publisher publisher = publisherDao.findBySdt(txtSdtNhaXuatBan.getText());
+				Publisher publisher = null;
+				try {
+					publisher = publisherDao.findBySdt(txtSdtNhaXuatBan.getText());
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				if (publisher == null) {
 					publisher = new Publisher(new ObjectId(), txtTenNhaXuatBan.getText(), txtSdtNhaXuatBan.getText(),
 							txtDiaChiNhaXuatBan.getText());
-					publisherDao.add(publisher);
+					try {
+						publisherDao.add(publisher);
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 
 				}
 
 				Set<Category> cates = new HashSet<>();
 				String[] listCategoryName = txtTheLoai.getText().split(",");
 				for (String categoryName : listCategoryName) {
-					Category category = categoryDao.findByName(categoryName);
+					Category category = null;
+					try {
+						category = categoryDao.findByName(categoryName);
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					if(category == null) {
 						System.out.println("err category empty");
 					}
@@ -743,7 +834,13 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 				int soLuong = Integer.parseInt(txtSoLuong.getText().trim());
 
 				Book b = new Book(new ObjectId(), name, author, cates, publisher, namXuatBan, donGia, soLuong);
-				boolean kq = bookDao.add(b);
+				boolean kq = false;
+				try {
+					kq = bookDao.add(b);
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 
 				if (kq) {
 					JOptionPane.showMessageDialog(null, "Thêm sách thành công");
@@ -782,7 +879,13 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 				if (choose == 0) {
 					tblDsBook.clearSelection();
 
-					boolean kq = bookDao.delete(new ObjectId(tblDsBook.getValueAt(index, 0).toString()));
+					boolean kq = false;
+					try {
+						kq = bookDao.delete(new ObjectId(tblDsBook.getValueAt(index, 0).toString()));
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 
 					if (kq) {
 						JOptionPane.showMessageDialog(contentPane, "Xóa thành công");
@@ -1041,17 +1144,35 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 		String timTheo = cboTimTheo.getSelectedItem().toString();
 
 		if (timTheo.equals("Tên Sách")) {
-			List<Book> list = bookDao.findManyByName(txtTimKiem.getText());
+			List<Book> list = null;
+			try {
+				list = bookDao.findManyByName(txtTimKiem.getText());
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			renderDataTimKiem(list);
 			System.out.println(list.size());
 		}
 
 		else if (timTheo.equals("Tên tác giả")) {
-			List<Book> list = bookDao.findManyByAuthorName(txtTimKiem.getText());
+			List<Book> list = null;
+			try {
+				list = bookDao.findManyByAuthorName(txtTimKiem.getText());
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			
 			renderDataTimKiem(list);
 		}else if(timTheo.equals("Tên nhà xuất bản")) {
-			List<Book> list = bookDao.findManyByPublisherName(txtTimKiem.getText());
+			List<Book> list = null;
+			try {
+				list = bookDao.findManyByPublisherName(txtTimKiem.getText());
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			
 			renderDataTimKiem(list);
 		}

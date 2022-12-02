@@ -1,5 +1,7 @@
 package com.dao.impl;
 
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -19,14 +21,14 @@ import com.entities.Category;
 import com.entities.Publisher;
 import com.utils.HibernateUtils;
 
-public class BookDaoImpl implements BookDao {
+public class BookDaoImpl extends UnicastRemoteObject implements BookDao {
 	private OgmSessionFactory sessionFactory;
 
-	public BookDaoImpl() {
+	public BookDaoImpl()  throws RemoteException {
 		sessionFactory = HibernateUtils.getInstance().getSessionFactory();
 	}
 
-	public boolean add(Book book) {
+	public boolean add(Book book) throws RemoteException {
 		OgmSession session = sessionFactory.getCurrentSession();
 		Transaction tr = session.getTransaction();
 		try {
@@ -44,7 +46,7 @@ public class BookDaoImpl implements BookDao {
 	}
 
 	@Override
-	public boolean delete(ObjectId bookId) {
+	public boolean delete(ObjectId bookId) throws RemoteException {
 
 		OgmSession session = sessionFactory.getCurrentSession();
 		Transaction tr = session.getTransaction();
@@ -69,7 +71,7 @@ public class BookDaoImpl implements BookDao {
 	}
 
 	@Override
-	public boolean update(Book newBook) {
+	public boolean update(Book newBook) throws RemoteException {
 		OgmSession session = sessionFactory.getCurrentSession();
 		Transaction tr = session.getTransaction();
 
@@ -92,7 +94,7 @@ public class BookDaoImpl implements BookDao {
 	}
 
 	@Override
-	public Book findById(ObjectId bookId) {
+	public Book findById(ObjectId bookId)throws RemoteException {
 		OgmSession session = sessionFactory.getCurrentSession();
 		Transaction tx = session.beginTransaction();
 		Book b = null;
@@ -109,7 +111,7 @@ public class BookDaoImpl implements BookDao {
 	}
 
 	@Override
-	public List<Book> getAllBook() {
+	public List<Book> getAllBook()throws RemoteException {
 		OgmSession session = sessionFactory.getCurrentSession();
 		Transaction tx = session.beginTransaction();
 		List<Book> list = null;
@@ -126,7 +128,7 @@ public class BookDaoImpl implements BookDao {
 	}
 
 	@Override
-	public List findManyByName(String bookName) {
+	public List findManyByName(String bookName)throws RemoteException {
 		// TODO Auto-generated method stub
 		OgmSession session = sessionFactory.getCurrentSession();
 		Transaction tx = session.beginTransaction();
@@ -145,7 +147,7 @@ public class BookDaoImpl implements BookDao {
 	}
 
 	@Override
-	public List findManyByAuthorName(String authorName) {
+	public List findManyByAuthorName(String authorName)throws RemoteException {
 		OgmSession session = sessionFactory.getCurrentSession();
 		Transaction tx = session.beginTransaction();
 		List<Book> list = null;
@@ -173,7 +175,7 @@ public class BookDaoImpl implements BookDao {
 	}
 
 	@Override
-	public List findManyByPublisherName(String publisherName) {
+	public List findManyByPublisherName(String publisherName) throws RemoteException {
 		
 		OgmSession session = sessionFactory.getCurrentSession();
 		Transaction tx = session.beginTransaction();

@@ -8,6 +8,10 @@ public class Constants {
 	public static final String STUB_BOOK = "book";
 	public static final String STUB_BILL = "bill";
 	
+	public static final String STUB_CATEGORY = "category";
+	public static final String STUB_PUBLISHER = "publisher";
+	public static final String STUB_AUTHOR = "author";
+	
 	// database
 	public static final String DATABASE_NAME = "test-mophia-db";
 	public static final String URI_DB = "mongodb://localhost:27017/";

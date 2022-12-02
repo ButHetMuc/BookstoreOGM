@@ -1,5 +1,7 @@
 package com.dao.impl;
 
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -13,11 +15,11 @@ import com.entities.Author;
 import com.entities.Book;
 import com.utils.HibernateUtils;
 
-public class AuthorDaoImpl implements IAuthorDao {
+public class AuthorDaoImpl extends UnicastRemoteObject implements IAuthorDao {
 	
 	private OgmSessionFactory sessionFactory;
 
-	public AuthorDaoImpl() {
+	public AuthorDaoImpl() throws RemoteException {
 		sessionFactory= HibernateUtils.getInstance().getSessionFactory();
 	}
 
