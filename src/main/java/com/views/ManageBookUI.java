@@ -728,6 +728,7 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 							Category category = null;
 							try {
 								category = categoryDao.findByName(categoryName);
+								
 							} catch (RemoteException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
@@ -817,10 +818,12 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 				String[] listCategoryName = txtTheLoai.getText().split(",");
 				for (String categoryName : listCategoryName) {
 					Category category = null;
+					System.out.println(categoryName);
 					try {
 						category = categoryDao.findByName(categoryName);
 					} catch (RemoteException e1) {
 						// TODO Auto-generated catch block
+						
 						e1.printStackTrace();
 					}
 					if (category == null) {

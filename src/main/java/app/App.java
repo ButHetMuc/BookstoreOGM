@@ -55,10 +55,18 @@ public class App {
 		Set<Category> cates = new HashSet<Category>();
 		Category category1 = new Category(new ObjectId(), "Romantic");
 		Category category2 = new Category(new ObjectId(), "Remote");
-		cateDao.add(category2);
-		cateDao.add(category1);
-		cates.add(category1);
-		cates.add(category2);
+		Category ca = cateDao.findByName(category1.getName());
+		Category ca2 = cateDao.findByName(category2.getName());
+		if(ca == null) {
+			cateDao.add(ca);
+			
+		}
+		if(ca2 == null) {
+			cateDao.add(ca2);
+		}
+		
+		cates.add(ca);
+		cates.add(ca2);
 
 		Book b = new Book(new ObjectId(), "book_name", a, cates,p, 2001, 1000, 4);
 		bookDao.add(b);
