@@ -80,9 +80,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JComboBox;
 import javax.swing.ScrollPaneConstants;
 
-public class GenerateBillUI extends JFrame implements ActionListener  {
-	
-	
+public class GenerateBillUI extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -106,8 +104,10 @@ public class GenerateBillUI extends JFrame implements ActionListener  {
 	private JLabel lblCheck;
 
 	private JLabel lblTenKH;
-	private BillDao billDao ;
+	private BillDao billDao;
+
 	private BookDao bookDao;
+
 	private List<Bill> bills;
 	private List<Book> books;
 	private List<Book> books2;
@@ -144,15 +144,21 @@ public class GenerateBillUI extends JFrame implements ActionListener  {
 //	}
 
 	public void GUI() throws SQLException {
-		
+
 		try {
-			billDao = (BillDao) Naming.lookup(Constants.BASE_PATH_RMI+ Constants.STUB_BILL);
-			
+			billDao = (BillDao) Naming.lookup(Constants.BASE_PATH_RMI + Constants.STUB_BILL);
+
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
-			
+
 			e.printStackTrace();
 		}
-		
+		try {
+			bookDao = (BookDao) Naming.lookup(Constants.BASE_PATH_RMI + Constants.STUB_BOOK);
+		} catch (MalformedURLException | RemoteException | NotBoundException e) {
+
+			e.printStackTrace();
+		}
+
 		setTitle("Tạo hóa đơn");
 		setResizable(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
