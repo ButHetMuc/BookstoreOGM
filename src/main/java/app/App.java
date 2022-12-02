@@ -16,10 +16,12 @@ import com.dao.BillDao;
 import com.dao.BookDao;
 import com.dao.IAuthorDao;
 import com.dao.ICategoriesDao;
+import com.dao.IPublisherDao;
 import com.dao.impl.AuthorDaoImpl;
 import com.dao.impl.BillDaoImpl;
 import com.dao.impl.BookDaoImpl;
 import com.dao.impl.CategoryDaoImpl;
+import com.dao.impl.PublisherDaoImpl;
 import com.entities.Author;
 import com.entities.Bill;
 import com.entities.BillDetails;
@@ -37,18 +39,26 @@ public class App {
 	public static void main(String[] args) throws RemoteException {
 		BookDao bookDao = new BookDaoImpl();
 		IAuthorDao authDao = new AuthorDaoImpl();
+		IPublisherDao publisherDao = new PublisherDaoImpl();
 		ICategoriesDao cateDao = new CategoryDaoImpl();
 		BillDao billDao = new BillDaoImpl();
 		
 
 
 		Author a = new Author(new ObjectId(), "cong", "0868283916");
+		authDao.add(a);
+		
+		
 		Publisher p = new Publisher(new ObjectId(), "publisher 1", "095848333", "Ha Giang");
-
+		publisherDao.add(p);
+		
 		Set<Category> cates = new HashSet<Category>();
-
-		cates.add(new Category(new ObjectId(), "category 1"));
-		cates.add(new Category(new ObjectId(), "category 4"));
+		Category category1 = new Category(new ObjectId(), "Romantic");
+		Category category2 = new Category(new ObjectId(), "Remote");
+		cateDao.add(category2);
+		cateDao.add(category1);
+		cates.add(category1);
+		cates.add(category2);
 
 		Book b = new Book(new ObjectId(), "book_name", a, cates,p, 2001, 1000, 4);
 		bookDao.add(b);
@@ -68,17 +78,18 @@ public class App {
 //		System.out.println(cates2.size());
 //		
 		// test category
-		cateDao.add(new Category(new ObjectId(), "cate 1"));
 //		List<Category> list =  cateDao.getAll();
 //		System.out.println(list.size());
-		Customer cus = new Customer(new ObjectId(), "butle", "123456789");
-		BillDetails detail1 = new BillDetails(new ObjectId(),b,2 );
-		BillDetails detail2 = new BillDetails(new ObjectId(),b,2);
-		List<BillDetails> setDetails = new ArrayList<BillDetails>();
-		setDetails.add(detail1);
-		setDetails.add(detail2);
-		Bill bill = new Bill(new ObjectId(), new Date(), 100, cus ,setDetails);
-		billDao.add(bill);
+		
+//		Customer cus = new Customer(new ObjectId(), "butle", "123456789");
+//		BillDetails detail1 = new BillDetails(new ObjectId(),b,2 );
+//		BillDetails detail2 = new BillDetails(new ObjectId(),b,2);
+//		List<BillDetails> setDetails = new ArrayList<BillDetails>();
+//		setDetails.add(detail1);
+//		setDetails.add(detail2);
+//		Bill bill = new Bill(new ObjectId(), new Date(), 100, cus ,setDetails);
+//		billDao.add(bill);
+		
 //		List<Bill> bills = billDao.findByCustomerName("but");
 //		System.out.println(bills.size());
 //		List<Bill> bills1 = billDao.findByCustomerPhonenumber("1234");
