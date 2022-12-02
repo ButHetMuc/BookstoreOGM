@@ -85,7 +85,7 @@ public class GenerateBillUI extends JFrame implements ActionListener  {
 	
 
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
+	private static JPanel contentPane;
 	private JTextField txtSDT;
 	private JButton btnThemThuoc;
 	private JButton btnBoThuoc;
@@ -101,7 +101,7 @@ public class GenerateBillUI extends JFrame implements ActionListener  {
 	private JTextField txtTongTien;
 	private JTextField txtTenKH;
 
-	private String strCheckFalse = "✘";
+//	private String strCheckFalse = "✘";
 	private String strCheckTrue = "✔";
 	private JLabel lblCheck;
 
@@ -202,11 +202,11 @@ public class GenerateBillUI extends JFrame implements ActionListener  {
 		txtSDT.setColumns(18);
 		pnSoDienThoai.add(txtSDT);
 
-		lblCheck = new JLabel(strCheckFalse);
-
-		lblCheck.setForeground(Color.RED);
-		lblCheck.setPreferredSize(new Dimension(10, 20));
-		pnSoDienThoai.add(lblCheck);
+//		lblCheck = new JLabel(strCheckFalse);
+//
+//		lblCheck.setForeground(Color.RED);
+//		lblCheck.setPreferredSize(new Dimension(10, 20));
+//		pnSoDienThoai.add(lblCheck);
 
 		JPanel pnTenKH = new JPanel();
 		FlowLayout flowLayout_1 = (FlowLayout) pnTenKH.getLayout();
@@ -421,7 +421,7 @@ public class GenerateBillUI extends JFrame implements ActionListener  {
 	}
 
 	public JPanel getContentPane() {
-		return this.contentPane;
+		return contentPane;
 	}
 
 	@Override

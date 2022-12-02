@@ -182,7 +182,7 @@ public class StartedUI extends JFrame  {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				renderMain(taoHoaDonGui.getContentPane(), "tao hoa don");
+				renderMain( taoHoaDonGui.getContentPane(), "tao hoa don");
 			}
 		});
 			

@@ -32,11 +32,8 @@ private OgmSessionFactory sessionFactory ;
 		Transaction tr = session.getTransaction();
 		try {
 			tr.begin();
-<<<<<<< HEAD
-			for (Category caterogy : book.getCategories()) {
-=======
+
 			for (Category caterogy	: book.getCategories()) {
->>>>>>> 1a518936ea52517b80d8defae543143159a60c2e
 				session.save(caterogy);
 			}
 			session.save(book.getAuthor());
