@@ -107,7 +107,7 @@ public class GenerateBillUI extends JFrame implements ActionListener  {
 
 	private JLabel lblTenKH;
 	private BillDao billDao ;
-	private BookDao bookDao = new BookDaoImpl();
+	private BookDao bookDao ;
 	private List<Bill> bills;
 	private List<Book> books;
 	private List<Book> books2;
@@ -147,6 +147,12 @@ public class GenerateBillUI extends JFrame implements ActionListener  {
 		
 		try {
 			billDao = (BillDao) Naming.lookup(Constants.BASE_PATH_RMI+ Constants.STUB_BILL);
+		} catch (MalformedURLException | RemoteException | NotBoundException e) {
+			
+			e.printStackTrace();
+		}
+		try {
+			bookDao = (BookDao) Naming.lookup(Constants.BASE_PATH_RMI+ Constants.STUB_BOOK);
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
 			
 			e.printStackTrace();
@@ -335,7 +341,12 @@ public class GenerateBillUI extends JFrame implements ActionListener  {
 		books = new ArrayList<Book>();
 		books2 = new ArrayList<Book>();
 		cartBooks = new ArrayList<BillDetails>();
-		books = bookDao.getAllBook();
+		try {
+			books = bookDao.getAllBook();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		tblThuoc.clearSelection();
 		modelThuoc.setRowCount(0);
 		for (Book b : books) {
