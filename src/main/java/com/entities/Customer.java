@@ -2,6 +2,7 @@ package com.entities;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
+@Entity
 public class Customer implements Serializable {
 	/**
 	 * 
@@ -26,6 +28,7 @@ public class Customer implements Serializable {
 	@Id
 	private ObjectId id;
 	private String name;
+	@Column(unique = true)
 	private String phoneNumber;
 
 }

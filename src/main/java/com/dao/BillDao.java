@@ -8,6 +8,7 @@ import org.bson.types.ObjectId;
 
 import com.entities.Bill;
 import com.entities.Book;
+import com.entities.Customer;
 
 public interface BillDao extends Remote {
 	public boolean add(Bill bill) throws RemoteException;
@@ -17,4 +18,5 @@ public interface BillDao extends Remote {
 	public List<Bill> getAllBills()throws RemoteException;
 	public List<Bill> findByCustomerName(String customerName)throws RemoteException;
 	public List<Bill> findByCustomerPhonenumber(String CustomerPhonenumber)throws RemoteException;
+	public List<Customer> getCustomers() throws RemoteException;
 }

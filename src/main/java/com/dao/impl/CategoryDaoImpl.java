@@ -22,7 +22,7 @@ public class CategoryDaoImpl extends UnicastRemoteObject implements ICategoriesD
 	}
 
 	@Override
-	public boolean add(Category category) {
+	public boolean add(Category category) throws RemoteException {
 		OgmSession session = sessionFactory.getCurrentSession();
 		Transaction tr = session.getTransaction();
 		try {
@@ -43,7 +43,7 @@ public class CategoryDaoImpl extends UnicastRemoteObject implements ICategoriesD
 	}
 
 	@Override
-	public List getAll() {
+	public List getAll() throws RemoteException {
 		OgmSession session = sessionFactory.getCurrentSession();
 		Transaction tr = session.getTransaction();
 		List<Category> list = null;
@@ -65,12 +65,12 @@ public class CategoryDaoImpl extends UnicastRemoteObject implements ICategoriesD
 	}
 
 	@Override
-	public Category findByName(String nameCategory) {
+	public Category findByName(String nameCategory) throws RemoteException {
 		// TODO Auto-generated method stub
 		OgmSession session = sessionFactory.getCurrentSession();
 		Transaction tr = session.getTransaction();
 		Category category = null;
-
+		System.out.println("here");
 		try {
 			tr.begin();
 			String sql = "db.categories.find({'name': '" + nameCategory + "'})";

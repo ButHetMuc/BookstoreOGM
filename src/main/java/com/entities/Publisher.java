@@ -22,6 +22,7 @@ public class Publisher implements Serializable {
 	@Id
 	private ObjectId id;
 	private String name;
+	@Column(unique = true)
 	private String phoneNumber;
 	private String address;
 }

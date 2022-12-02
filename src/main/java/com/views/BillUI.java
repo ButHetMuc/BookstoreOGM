@@ -267,7 +267,7 @@ public class BillUI extends JFrame implements ActionListener, MouseListener, Key
 		if (o.equals(btnXuatHoaDon)) {
 			int idx = tableHD.getSelectedRow();
 			if (idx == -1) {
-				JOptionPane.showMessageDialog(pnMain, "Vui lòng chọn hóa đơn để xuất");
+				JOptionPane.showMessageDialog(pnMain,"Vui lòng chọn hóa đơn để xuất");
 				return;
 			}
 

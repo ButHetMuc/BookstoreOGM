@@ -58,6 +58,7 @@ import javax.swing.table.DefaultTableModel;
 import org.bson.types.ObjectId;
 import org.hibernate.internal.build.AllowSysOut;
 
+import com.dao.BillDao;
 import com.dao.BookDao;
 import com.dao.IAuthorDao;
 import com.dao.ICategoriesDao;
@@ -160,17 +161,19 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 	public ManageBookUI() throws SQLException {
 
 		// init dao
+
 		try {
-			bookDao = new BookDaoImpl();
-			authorDao = new AuthorDaoImpl();
-			categoryDao = new CategoryDaoImpl();
-			publisherDao = new PublisherDaoImpl();
-		} catch (RemoteException e1) {
+			bookDao = (BookDao) Naming.lookup(Constants.BASE_PATH_RMI + Constants.STUB_BOOK);
+
+			authorDao = (IAuthorDao) Naming.lookup(Constants.BASE_PATH_RMI + Constants.STUB_AUTHOR);
+			categoryDao = (ICategoriesDao) Naming.lookup(Constants.BASE_PATH_RMI + Constants.STUB_CATEGORY);
+			publisherDao = (IPublisherDao) Naming.lookup(Constants.BASE_PATH_RMI + Constants.STUB_PUBLISHER);
+		} catch (MalformedURLException | RemoteException | NotBoundException e2) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e2.printStackTrace();
+			System.out.println("remote erro");
 		}
 
-		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, 1300, 700);
 		contentPane = new JPanel();
@@ -556,7 +559,7 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 				String sdtNhaXuatBan = txtSdtNhaXuatBan.getText();
 				// sửa if thành regex số điện thoại
 				if (sdtNhaXuatBan.length() == 10) {
-					Publisher nhaXuatBan= null;
+					Publisher nhaXuatBan = null;
 					try {
 						nhaXuatBan = publisherDao.findBySdt(sdtNhaXuatBan);
 					} catch (RemoteException e1) {
@@ -594,8 +597,7 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 	}
 
 	private void addDataCboLoaiBook() {
-		
-		
+
 		try {
 			dsLoaiBook = categoryDao.getAll();
 		} catch (RemoteException e) {
@@ -633,7 +635,7 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 					book.getAuthor().getName(), book.getPrice(), book.getQuantity() };
 			modelDsBook.addRow(row);
 		}
-		
+
 		disableEdit();
 		setNull();
 		btnThemMoi.setText("Thêm");
@@ -674,14 +676,14 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 			if (o.equals(btnThemMoi) && btnThemMoi.getText() == "Lưu thay đổi") {
 
 				int index = tblDsBook.getSelectedRow();
-				if(index == -1) {
+				if (index == -1) {
 					JOptionPane.showMessageDialog(null, "Vui lòng chọn dòng cần cập nhật");
 					return;
 				}
 				if (index != -1) {
 					if (checkData()) {
 						// static data
-						
+
 						Author author = null;
 						try {
 							author = authorDao.findBySdt(txtSdtTacGia.getText());
@@ -707,8 +709,8 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 							e1.printStackTrace();
 						}
 						if (publisher == null) {
-							publisher = new Publisher(new ObjectId(), txtTenNhaXuatBan.getText(), txtSdtNhaXuatBan.getText(),
-									txtDiaChiNhaXuatBan.getText());
+							publisher = new Publisher(new ObjectId(), txtTenNhaXuatBan.getText(),
+									txtSdtNhaXuatBan.getText(), txtDiaChiNhaXuatBan.getText());
 							try {
 								publisherDao.add(publisher);
 							} catch (RemoteException e1) {
@@ -723,14 +725,15 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 						Set<Category> cates = new HashSet<>();
 						String[] listCategoryName = txtTheLoai.getText().split(",");
 						for (String categoryName : listCategoryName) {
-							Category category= null;
+							Category category = null;
 							try {
 								category = categoryDao.findByName(categoryName);
+								
 							} catch (RemoteException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
-							if(category == null) {
+							if (category == null) {
 								System.out.println("err category empty");
 							}
 							cates.add(category);
@@ -744,7 +747,6 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 						ObjectId bookId = new ObjectId(tblDsBook.getValueAt(index, 0).toString());
 						Book newBook = new Book(bookId, name, author, cates, publisher, namXuatBan, donGia, soLuong);
 
-
 						boolean kq = false;
 						try {
 							kq = bookDao.update(newBook);
@@ -754,11 +756,11 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 						}
 						if (kq) {
 							JOptionPane.showMessageDialog(null, "Sửa thành công");
-							
+
 							renderData();
 							setNull();
 							disableEdit();
-							
+
 						} else {
 							JOptionPane.showMessageDialog(null, "Có lỗi xảy ra");
 							return;
@@ -776,7 +778,7 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 			if (checkData()) {
 
 				// static data
-				
+
 				Author author = null;
 				try {
 					author = authorDao.findBySdt(txtSdtTacGia.getText());
@@ -816,13 +818,15 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 				String[] listCategoryName = txtTheLoai.getText().split(",");
 				for (String categoryName : listCategoryName) {
 					Category category = null;
+					System.out.println(categoryName);
 					try {
 						category = categoryDao.findByName(categoryName);
 					} catch (RemoteException e1) {
 						// TODO Auto-generated catch block
+						
 						e1.printStackTrace();
 					}
-					if(category == null) {
+					if (category == null) {
 						System.out.println("err category empty");
 					}
 					cates.add(category);
@@ -1163,9 +1167,9 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
+
 			renderDataTimKiem(list);
-		}else if(timTheo.equals("Tên nhà xuất bản")) {
+		} else if (timTheo.equals("Tên nhà xuất bản")) {
 			List<Book> list = null;
 			try {
 				list = bookDao.findManyByPublisherName(txtTimKiem.getText());
@@ -1173,7 +1177,7 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
+
 			renderDataTimKiem(list);
 		}
 

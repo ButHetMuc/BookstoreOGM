@@ -14,6 +14,7 @@ import com.dao.BillDao;
 import com.entities.Bill;
 import com.entities.BillDetails;
 import com.entities.Book;
+import com.entities.Customer;
 import com.utils.HibernateUtils;
 
 public class BillDaoImpl extends UnicastRemoteObject implements BillDao  {
@@ -129,7 +130,7 @@ public class BillDaoImpl extends UnicastRemoteObject implements BillDao  {
 		return list;
 	}
 	@Override
-	public List findByCustomerPhonenumber(String CustomerPhonenumber) throws RemoteException{
+	public List<Bill> findByCustomerPhonenumber(String CustomerPhonenumber) throws RemoteException{
 		OgmSession session = sessionFactory.openSession();
 		Transaction tr = session.beginTransaction();
 		List<Bill> list = null;
@@ -137,6 +138,23 @@ public class BillDaoImpl extends UnicastRemoteObject implements BillDao  {
 		try {
 			
 			NativeQuery<Bill> query = session.createNativeQuery("db.bills.find({'customer.phoneNumber': {'$regex': '.*" + CustomerPhonenumber + ".*'}})", Bill.class);
+			list = query.getResultList();
+			tr.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			tr.rollback();
+		}
+		return list;
+	}
+	@Override
+	public List<Customer> getCustomers() throws RemoteException {
+		OgmSession session = sessionFactory.openSession();
+		Transaction tr = session.beginTransaction();
+		List<Customer> list = null;
+
+		try {
+			String queryString = "db.bills.aggregate([{'$group':{'_id':'$customer.phoneNumber','name':{'$first':'$customer.name'}}}])";
+			NativeQuery<Customer> query = session.createNativeQuery(queryString, Customer.class);
 			list = query.getResultList();
 			tr.commit();
 		} catch (Exception e) {

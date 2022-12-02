@@ -22,5 +22,6 @@ public class Author implements Serializable {
 	@Id
 	private ObjectId id;
 	private String name;
+	@Column(unique = true)
 	private String phoneNumber;
 }

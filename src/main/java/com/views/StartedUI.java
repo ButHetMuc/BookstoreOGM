@@ -74,7 +74,7 @@ public class StartedUI extends JFrame  {
 	 * Create the frame.
 	 */
 	public StartedUI() throws SQLException {
-		setTitle("Quản lí hiệu thuốc");
+		setTitle("Quản lí hiệu sách");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0,0, 1300, 700);
 		icon = new ImageIcon("data/images/snakelogo1.png");
@@ -117,10 +117,10 @@ public class StartedUI extends JFrame  {
 		mntmThemHoaDon = new JMenuItem("Thêm hóa đơn");
 		mnHoaDon.add(mntmThemHoaDon);
 		
-		mnKhachHang = new JMenu("Khách hàng");
+		mnKhachHang = new JMenu("Nhà xuất bản");
 		menuBar.add(mnKhachHang);
 		
-		mntmQuanLiKH = new JMenuItem("Quản lí Khách hàng");
+		mntmQuanLiKH = new JMenuItem("Quản lí nhà xuất bản");
 		mnKhachHang.add(mntmQuanLiKH);
 				
 		mnNhanVien = new JMenu("Nhân viên");
@@ -134,6 +134,7 @@ public class StartedUI extends JFrame  {
 			
 			@Override
 			public void menuSelected(MenuEvent e) {
+				
 				renderMain(trangChuGui.getContentpane(), "Trang chủ");
 				
 			}
@@ -154,6 +155,12 @@ public class StartedUI extends JFrame  {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				try {
+					quanLiThuocGui = new ManageBookUI();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				renderMain(quanLiThuocGui.getContentpane(),"quan li thuoc");
 			}
 		});
@@ -161,13 +168,25 @@ public class StartedUI extends JFrame  {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				renderMain(khachHangGui.getContentPane(), "quan li khach hang");
+				try {
+					khachHangGui = new CustomerUI();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				renderMain(khachHangGui.getContentPane(), "quan li nhà xuất bản");
 			}
 		});
 		mntmQuanLiNV.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				try {
+					nhanVienGui = new EmployeeUI();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				renderMain((JPanel)nhanVienGui.getContentPane(), "quan li nhan vien");
 			}
 		});
@@ -175,6 +194,12 @@ public class StartedUI extends JFrame  {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				try {
+					hoaDonGui = new BillUI();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				renderMain(hoaDonGui.getContentPane(), "quan li hoa don");
 			}
 		});
@@ -182,8 +207,13 @@ public class StartedUI extends JFrame  {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				renderMain( taoHoaDonGui.getContentPane(), "tao hoa don");
-			}
+				try {
+					taoHoaDonGui = new GenerateBillUI();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				renderMain(taoHoaDonGui.getContentPane(), "tao hoa don");			}
 		});
 			
 
@@ -198,6 +228,12 @@ public class StartedUI extends JFrame  {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				try {
+					turnoverUI = new TurnoverUI();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				renderMain(turnoverUI.getContenpain(), "Thong ke thuoc");
 			}
 		});
