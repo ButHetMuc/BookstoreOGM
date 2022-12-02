@@ -71,8 +71,6 @@ import com.entities.Author;
 import com.entities.Book;
 import com.entities.Category;
 import com.entities.Publisher;
-import com.rmi.interfaces.IBook_dao;
-import com.rmi.interfaces.ITestEntityManage;
 import com.utils.Constants;
 
 //import connectdb.ConnectDB;
@@ -131,7 +129,6 @@ public class ManageBookUI extends JFrame implements ActionListener, MouseListene
 	private IAuthorDao authorDao;
 	private IPublisherDao publisherDao;
 	private ICategoriesDao categoryDao;
-	private IBook_dao book_remote;
 
 	private DefaultComboBoxModel<String> modelCboCategories;
 	private DefaultComboBoxModel<String> modelCboNhaXuatBan;
